@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<!-- saved from url=(0065)file:///C:/Users/barbara.chagas/Downloads/handoff_cpj3c_v4_2.html -->
+<html lang="pt-BR"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Handoff Implementação — CPJ-3C</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Calibri, 'Segoe UI', sans-serif; font-size: 14px; background: #f0f2f5; color: #2D2D2D; padding: 2rem 1rem; }
+  .form-wrap { max-width: 820px; margin: 0 auto; }
+
+  .form-header { background: #343748; color: #fff; padding: 1.4rem 1.75rem; border-radius: 10px 10px 0 0; display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; }
+  .form-header h1 { font-size: 16px; font-weight: 700; color: #fff; margin-bottom: 3px; letter-spacing: .02em; }
+  .form-header p { font-size: 12px; color: rgba(255,255,255,.6); }
+  .form-header .badge { background: rgba(255,255,255,.13); color: #fff; font-size: 10px; letter-spacing: .08em; text-transform: uppercase; padding: 3px 9px; border-radius: 4px; white-space: nowrap; margin-top: 4px; }
+
+  .section { border: 1px solid #d8dce2; border-top: none; background: #fff; }
+  .section:last-of-type { border-radius: 0 0 10px 10px; }
+
+  .section-header { background: #2C3799; color: #fff; padding: .65rem 1.5rem; font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; display: flex; align-items: center; gap: .5rem; }
+  .section-header .lt { background: rgba(255,255,255,.18); border-radius: 4px; padding: 1px 7px; font-size: 12px; }
+
+  .hint { background: #eef0f5; border-left: 3px solid #2C3799; padding: .55rem 1.1rem; font-size: 12px; color: #555; font-style: italic; }
+
+  .sb { padding: 1.1rem 1.5rem; }
+
+  .fr2 { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem 1.5rem; margin-bottom: .8rem; }
+  .fr1 { display: grid; grid-template-columns: 1fr; gap: .75rem; margin-bottom: .8rem; }
+
+  .fl label { display: block; font-size: 11px; font-weight: 700; color: #2C3799; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 4px; }
+  .fl input[type=text], .fl input[type=date], .fl input[type=number], .fl select, .fl textarea {
+    width: 100%; border: 1px solid #c8cdd6; border-radius: 6px; padding: 7px 10px;
+    font-size: 13px; color: #2D2D2D; background: #fff; outline: none; font-family: inherit;
+    transition: border-color .15s;
+  }
+  .fl input:focus, .fl select:focus, .fl textarea:focus { border-color: #2C3799; }
+  .fl textarea { min-height: 60px; resize: vertical; }
+
+  .stitle { font-size: 11px; font-weight: 700; color: #343748; text-transform: uppercase; letter-spacing: .07em; margin: 1.1rem 0 .5rem; padding-bottom: 4px; border-bottom: 1px solid #e4e7ed; }
+
+  .cg { display: flex; flex-direction: column; gap: 6px; margin-top: 4px; }
+  .ci { display: flex; align-items: center; gap: 8px; font-size: 13px; cursor: pointer; line-height: 1.4; }
+  .ci input[type=radio], .ci input[type=checkbox] { width: 14px; height: 14px; accent-color: #2C3799; flex-shrink: 0; cursor: pointer; }
+
+  .rg { display: flex; flex-direction: column; gap: 6px; margin-top: 4px; }
+  .ri { display: flex; align-items: flex-start; gap: 8px; font-size: 13px; cursor: pointer; line-height: 1.5; }
+  .ri input[type=radio] { width: 14px; height: 14px; margin-top: 3px; accent-color: #2C3799; flex-shrink: 0; cursor: pointer; }
+  .ri.w { color: #b83b00; font-weight: 600; }
+
+  table.tf { width: 100%; border-collapse: collapse; margin-top: .5rem; font-size: 12px; table-layout: fixed; }
+  table.tf th { background: #E7EBEE; color: #343748; font-weight: 700; text-align: left; padding: 7px 10px; border: 1px solid #d0d5de; font-size: 11px; text-transform: uppercase; letter-spacing: .05em; }
+  table.tf td { padding: 6px 8px; border: 1px solid #d0d5de; vertical-align: top; }
+  table.tf tr.ev td { background: #f7f8fa; }
+  table.tf select, table.tf input[type=text], table.tf input[type=date] { font-size: 12px; padding: 4px 7px; border: 1px solid #c8cdd6; border-radius: 5px; width: 100%; background: #fff; color: #2D2D2D; font-family: inherit; }
+
+  .ab { border-radius: 6px; padding: .65rem 1rem; font-size: 12px; margin: .8rem 0 0; display: flex; align-items: flex-start; gap: 8px; }
+  .ab.inf { background: #e8f2fc; color: #0a4280; border-left: 3px solid #1a6abf; }
+  .ab.wrn { background: #fef3e2; color: #5c3a00; border-left: 3px solid #c47f00; }
+
+  .pend-box { display: none; padding: 4px 0 2px; }
+  .pend-box textarea { font-size: 12px; padding: 5px 7px; border: 1px solid #c8cdd6; border-radius: 5px; width: 100%; font-family: inherit; min-height: 38px; resize: vertical; }
+
+  .wfc { display: flex; flex-direction: column; gap: 5px; }
+  .wf-tags { display: flex; flex-wrap: wrap; gap: 5px; padding: 4px 0 2px; }
+  .wf-tag { font-size: 11px; font-weight: 600; padding: 4px 11px; border-radius: 20px; border: 1px solid #c8cdd6; cursor: pointer; background: #fff; color: #666; transition: all .12s; user-select: none; }
+  .wf-tag.on { background: #2C3799; color: #fff; border-color: #2C3799; }
+  .wf-tag:hover:not(.on) { border-color: #2C3799; color: #2C3799; }
+
+  .tab-blk { display: flex; gap: 1rem; margin-top: .5rem; }
+  .tbtn { flex: 1; padding: .85rem 1rem; border-radius: 8px; border: 2px solid transparent; cursor: pointer; font-size: 13px; font-weight: 700; text-align: center; transition: opacity .15s, outline .1s; font-family: inherit; }
+  .tbtn.g { background: #eaf6e1; color: #2d6011; border-color: #5a9e30; }
+  .tbtn.r { background: #fdecea; color: #7a1a1a; border-color: #d94040; }
+  .tbtn.selected { outline: 3px solid #343748; outline-offset: 2px; }
+
+  .submit-bar { background: #343748; padding: 1.1rem 1.5rem; display: flex; justify-content: space-between; align-items: center; border-radius: 0 0 10px 10px; margin-top: 0; }
+  .submit-bar span { color: rgba(255,255,255,.45); font-size: 12px; }
+  .submit-bar button { background: #2C3799; color: #fff; border: none; border-radius: 7px; padding: .65rem 1.75rem; font-size: 13px; font-weight: 700; cursor: pointer; font-family: inherit; letter-spacing: .03em; transition: background .15s; }
+  .submit-bar button:hover { background: #3a4bbf; }
+
+  .confirm-msg { display: none; background: #eaf6e1; color: #2d6011; border: 1px solid #5a9e30; border-radius: 8px; padding: .8rem 1.2rem; margin-top: 1rem; font-size: 13px; font-weight: 600; text-align: center; }
+
+  @media (max-width: 600px) {
+    .fr2 { grid-template-columns: 1fr; }
+    .tab-blk { flex-direction: column; }
+  }
+  @media print {
+    body { background: #fff; padding: 0; }
+    .submit-bar button { display: none; }
+  }
+</style>
+</head>
+<body>
+<div class="form-wrap">
+
+  <div class="form-header">
+    <div>
+      <h1>Preâmbulo Tech — Handoff Implementação → CS · Suporte · Comercial</h1>
+      <p>Encerramento de projeto CPJ-3C &nbsp;·&nbsp; Uso interno &nbsp;·&nbsp; Proibido enviar para clientes</p>
+    </div>
+    <div class="badge">Uso interno</div>
+  </div>
+
+  <!-- A -->
+  <div class="section">
+    <div class="section-header"><span class="lt">A</span> Identificação do projeto</div>
+    <div class="sb">
+      <div class="fr2">
+        <div class="fl"><label>Implementador responsável</label><input type="text"></div>
+        <div class="fl"><label>PMO responsável</label><input type="text"></div>
+      </div>
+      <div class="fr2">
+        <div class="fl"><label>Data do handoff</label><input type="date"></div>
+        <div class="fl"><label>Duração (dias corridos)</label><input type="number" placeholder="Ex: 28"></div>
+      </div>
+      <div class="fr2">
+        <div class="fl"><label>Nome do escritório / departamento jurídico</label><input type="text"></div>
+        <div class="fl"><label>Código do cliente</label><input type="text" placeholder="Ex: 00123"></div>
+      </div>
+      <div class="fr1">
+        <div class="fl"><label>Atendimentos realizados</label><input type="number" placeholder="Ex: 12" style="max-width:200px"></div>
+      </div>
+
+      <div class="stitle">Pacote contratado</div>
+      <div class="cg" style="flex-direction:row;flex-wrap:wrap;gap:.6rem 1.5rem;">
+        <label class="ci"><input type="radio" name="pac"> One</label>
+        <label class="ci"><input type="radio" name="pac"> Pro</label>
+        <label class="ci"><input type="radio" name="pac"> Infinity</label>
+        <label class="ci"><input type="radio" name="pac"> Enterprise</label>
+        <label class="ci"><input type="radio" name="pac"> Upgrade — de qual versão:&nbsp;<input type="text" style="width:120px;display:inline-block"></label>
+      </div>
+
+      <div class="stitle">Input de dados utilizado</div>
+      <div class="cg">
+        <label class="ci">
+          <input type="checkbox" id="mig-chk">
+          Migração de sistema anterior —&nbsp;
+          <select id="mig-sel" style="display:none;font-size:12px;padding:4px 7px;border:1px solid #c8cdd6;border-radius:5px;background:#fff;color:#2D2D2D;">
+            <option value="">— selecionar —</option>
+            <option>Astrea</option>
+            <option>Themis</option>
+            <option>Advwin</option>
+            <option>AdvNet</option>
+            <option>Projuris</option>
+            <option>SAJ</option>
+            <option>Jurídico Certo</option>
+            <option>Legal One</option>
+            <option>DataJuris</option>
+            <option>Office Adv</option>
+            <option>Planilha própria</option>
+            <option>Outro</option>
+          </select>
+          <input type="text" id="mig-outro" placeholder="Qual sistema?" style="display:none;margin-left:6px;width:130px;font-size:12px;padding:4px 7px;border:1px solid #c8cdd6;border-radius:5px;">
+        </label>
+        <label class="ci"><input type="checkbox"> Discovery via OAB</label>
+        <label class="ci"><input type="checkbox"> Discovery via CNJ / CPF / CNPJ</label>
+        <label class="ci"><input type="checkbox"> Planilha padrão Preâmbulo</label>
+        <label class="ci"><input type="checkbox"> Planilha personalizada</label>
+        <label class="ci"><input type="checkbox"> Base zerada — cliente cadastrou manualmente</label>
+      </div>
+    </div>
+  </div>
+
+  <!-- B -->
+  <div class="section">
+    <div class="section-header"><span class="lt">B</span> Ambiente e configuração base</div>
+    <div class="hint">Preencha com o que você verificou diretamente no sistema — não com o que o cliente disse.</div>
+    <div class="sb">
+
+      <div class="stitle">Ambiente de instalação</div>
+      <div class="rg" style="flex-direction:row;gap:1.5rem;flex-wrap:wrap;">
+        <label class="ri"><input type="radio" name="amb"> On-premise</label>
+        <label class="ri"><input type="radio" name="amb"> Preâmbulo Cloud</label>
+        <label class="ri"><input type="radio" name="amb"> Cloud externa (cliente gerencia)</label>
+      </div>
+
+      <div class="stitle">Suporte técnico do cliente</div>
+      <div class="fr1">
+        <div class="fl"><label>Técnico responsável do cliente e contato</label><input type="text" placeholder="Nome · telefone ou e-mail"></div>
+      </div>
+
+      <div class="stitle">Status das configurações base</div>
+      <table class="tf">
+        <thead><tr><th>Configuração</th><th style="width:230px">Status</th><th style="width:95px">Validado?</th></tr></thead>
+        <tbody id="cfg-tbody"><tr>
+    <td>Matérias</td>
+    <td>
+      <select id="cfg0" onchange="togglePend(&#39;cfg0&#39;,&#39;pnd0&#39;)">
+        <option>Personalizado para o escritório</option>
+        <option>Padrão do sistema</option>
+        <option>Pendente</option>
+      </select>
+      <div class="pend-box" id="pnd0">
+        <textarea placeholder="Descreva a pendência..."></textarea>
+      </div>
+    </td>
+    <td><select><option>Sim</option><option>Não</option></select></td></tr><tr class="ev">
+    <td>Tipos de prazos</td>
+    <td>
+      <select id="cfg1" onchange="togglePend(&#39;cfg1&#39;,&#39;pnd1&#39;)">
+        <option>Personalizado para o escritório</option>
+        <option>Padrão do sistema</option>
+        <option>Pendente</option>
+      </select>
+      <div class="pend-box" id="pnd1">
+        <textarea placeholder="Descreva a pendência..."></textarea>
+      </div>
+    </td>
+    <td><select><option>Sim</option><option>Não</option></select></td></tr><tr>
+    <td>Eventos</td>
+    <td>
+      <select id="cfg2" onchange="togglePend(&#39;cfg2&#39;,&#39;pnd2&#39;)">
+        <option>Personalizado para o escritório</option>
+        <option>Padrão do sistema</option>
+        <option>Pendente</option>
+      </select>
+      <div class="pend-box" id="pnd2">
+        <textarea placeholder="Descreva a pendência..."></textarea>
+      </div>
+    </td>
+    <td><select><option>Sim</option><option>Não</option></select></td></tr><tr class="ev">
+    <td>Células e equipes</td>
+    <td>
+      <select id="cfg3" onchange="togglePend(&#39;cfg3&#39;,&#39;pnd3&#39;)">
+        <option>Personalizado para o escritório</option>
+        <option>Padrão do sistema</option>
+        <option>Pendente</option>
+      </select>
+      <div class="pend-box" id="pnd3">
+        <textarea placeholder="Descreva a pendência..."></textarea>
+      </div>
+    </td>
+    <td><select><option>Sim</option><option>Não</option></select></td></tr><tr>
+    <td>Marcadores</td>
+    <td>
+      <select id="cfg4" onchange="togglePend(&#39;cfg4&#39;,&#39;pnd4&#39;)">
+        <option>Personalizado para o escritório</option>
+        <option>Padrão do sistema</option>
+        <option>Pendente</option>
+      </select>
+      <div class="pend-box" id="pnd4">
+        <textarea placeholder="Descreva a pendência..."></textarea>
+      </div>
+    </td>
+    <td><select><option>Sim</option><option>Não</option></select></td></tr><tr class="ev">
+    <td>Grupos de trabalho</td>
+    <td>
+      <select id="cfg5" onchange="togglePend(&#39;cfg5&#39;,&#39;pnd5&#39;)">
+        <option>Personalizado para o escritório</option>
+        <option>Padrão do sistema</option>
+        <option>Pendente</option>
+      </select>
+      <div class="pend-box" id="pnd5">
+        <textarea placeholder="Descreva a pendência..."></textarea>
+      </div>
+    </td>
+    <td><select><option>Sim</option><option>Não</option></select></td></tr><tr>
+    <td>Classificação de publicações</td>
+    <td>
+      <select id="cfg6" onchange="togglePend(&#39;cfg6&#39;,&#39;pnd6&#39;)">
+        <option>Personalizado para o escritório</option>
+        <option>Padrão do sistema</option>
+        <option>Pendente</option>
+      </select>
+      <div class="pend-box" id="pnd6">
+        <textarea placeholder="Descreva a pendência..."></textarea>
+      </div>
+    </td>
+    <td><select><option>Sim</option><option>Não</option></select></td></tr></tbody>
+      </table>
+      <div class="ab inf">ℹ &nbsp;"Padrão do sistema" indica que o cliente vai operar com valores genéricos que podem não refletir o fluxo real do escritório — sinalizar como ponto de atenção para o CS.</div>
+
+      <div class="stitle">Usuários e perfis de acesso</div>
+      <table class="tf">
+        <thead><tr><th>Item</th><th style="width:270px">Situação</th></tr></thead>
+        <tbody>
+          <tr><td>Perfis de acesso configurados adequadamente</td><td><select><option>Sim</option><option>Parcialmente</option><option>Não — padrão genérico</option></select></td></tr>
+          <tr class="ev"><td>Senhas padrão alteradas pelos usuários</td><td><select><option>Sim</option><option>Não</option><option>Parcialmente</option></select></td></tr>
+          <tr><td>Usuário administrador local identificado e treinado</td><td><input type="text" placeholder="Nome do usuário no CPJ"></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- C -->
+  <div class="section">
+    <div class="section-header"><span class="lt">C</span> Status de configuração por item do sistema</div>
+    <div class="hint">Avaliação do implementador. "Em uso" = item funciona na tela E o cliente opera sem depender de orientação.</div>
+    <div class="sb">
+      <table class="tf">
+        <thead><tr><th>Item</th><th style="width:175px">Status</th><th>Observações</th></tr></thead>
+        <tbody id="mod-tbody"><tr><td>Processos</td><td><select id="mst0" onchange="toggleWf(0)">
+    <option>Em uso</option>
+    <option>Sem adoção</option>
+    <option>Parcial</option>
+    <option>Não configurado</option>
+    <option>N/A</option>
+  </select></td><td><input type="text"></td></tr><tr class="ev"><td>Pessoas</td><td><select id="mst1" onchange="toggleWf(1)">
+    <option>Em uso</option>
+    <option>Sem adoção</option>
+    <option>Parcial</option>
+    <option>Não configurado</option>
+    <option>N/A</option>
+  </select></td><td><input type="text"></td></tr><tr><td>Tramitação</td><td><select id="mst2" onchange="toggleWf(2)">
+    <option>Em uso</option>
+    <option>Sem adoção</option>
+    <option>Parcial</option>
+    <option>Não configurado</option>
+    <option>N/A</option>
+  </select></td><td><input type="text"></td></tr><tr class="ev"><td>Contagem de prazos ⚠</td><td><select id="mst3" onchange="toggleWf(3)">
+    <option>Em uso</option>
+    <option>Sem adoção</option>
+    <option>Parcial</option>
+    <option>Não configurado</option>
+    <option>N/A</option>
+  </select></td><td><input type="text"></td></tr><tr><td>Timesheet</td><td><select id="mst4" onchange="toggleWf(4)">
+    <option>Em uso</option>
+    <option>Sem adoção</option>
+    <option>Parcial</option>
+    <option>Não configurado</option>
+    <option>N/A</option>
+  </select></td><td><input type="text"></td></tr><tr class="ev"><td>Contratos e modelos de honorários</td><td><select id="mst5" onchange="toggleWf(5)">
+    <option>Em uso</option>
+    <option>Sem adoção</option>
+    <option>Parcial</option>
+    <option>Não configurado</option>
+    <option>N/A</option>
+  </select></td><td><input type="text"></td></tr><tr><td>Tarefas e agenda</td><td><select id="mst6" onchange="toggleWf(6)">
+    <option>Em uso</option>
+    <option>Sem adoção</option>
+    <option>Parcial</option>
+    <option>Não configurado</option>
+    <option>N/A</option>
+  </select></td><td><input type="text"></td></tr><tr class="ev"><td>Financeiro — contas a pagar/receber</td><td><select id="mst7" onchange="toggleWf(7)">
+    <option>Em uso</option>
+    <option>Sem adoção</option>
+    <option>Parcial</option>
+    <option>Não configurado</option>
+    <option>N/A</option>
+  </select></td><td><input type="text"></td></tr><tr><td>GED</td><td><select id="mst8" onchange="toggleWf(8)">
+    <option>Em uso</option>
+    <option>Sem adoção</option>
+    <option>Parcial</option>
+    <option>Não configurado</option>
+    <option>N/A</option>
+  </select></td><td><input type="text"></td></tr><tr class="ev"><td>Publicações</td><td><select id="mst9" onchange="toggleWf(9)">
+    <option>Em uso</option>
+    <option>Sem adoção</option>
+    <option>Parcial</option>
+    <option>Não configurado</option>
+    <option>N/A</option>
+  </select></td><td><input type="text"></td></tr><tr><td>Monitoramento</td><td><select id="mst10" onchange="toggleWf(10)">
+    <option>Em uso</option>
+    <option>Sem adoção</option>
+    <option>Parcial</option>
+    <option>Não configurado</option>
+    <option>N/A</option>
+  </select></td><td><input type="text"></td></tr><tr class="ev"><td>NFS-e</td><td><select id="mst11" onchange="toggleWf(11)">
+    <option>Em uso</option>
+    <option>Sem adoção</option>
+    <option>Parcial</option>
+    <option>Não configurado</option>
+    <option>N/A</option>
+  </select></td><td><input type="text" placeholder="NF de teste emitida com sucesso?"></td></tr><tr><td>Gerador de documentos</td><td><select id="mst12" onchange="toggleWf(12)">
+    <option>Em uso</option>
+    <option>Sem adoção</option>
+    <option>Parcial</option>
+    <option>Não configurado</option>
+    <option>N/A</option>
+  </select></td><td><input type="text"></td></tr><tr class="ev"><td>Intimações</td><td><select id="mst13" onchange="toggleWf(13)">
+    <option>Em uso</option>
+    <option>Sem adoção</option>
+    <option>Parcial</option>
+    <option>Não configurado</option>
+    <option>N/A</option>
+  </select></td><td><input type="text"></td></tr><tr><td>Workflow</td><td><select id="mst14" onchange="toggleWf(14)">
+    <option>Em uso</option>
+    <option>Sem adoção</option>
+    <option>Parcial</option>
+    <option>Não configurado</option>
+    <option>N/A</option>
+  </select></td><td><div class="wfc">
+      <div class="wf-tags" id="wft14"><span class="wf-tag" onclick="this.classList.toggle(&#39;on&#39;)">Fluxo simplificado</span><span class="wf-tag" onclick="this.classList.toggle(&#39;on&#39;)">Padrão</span><span class="wf-tag" onclick="this.classList.toggle(&#39;on&#39;)">Audiências</span><span class="wf-tag" onclick="this.classList.toggle(&#39;on&#39;)">SPF</span><span class="wf-tag" onclick="this.classList.toggle(&#39;on&#39;)">Personalizado</span></div>
+      <input type="text" placeholder="Observações adicionais" style="font-size:12px;padding:4px 7px;border:1px solid #c8cdd6;border-radius:5px;width:100%;margin-top:3px;">
+    </div></td></tr></tbody>
+      </table>
+      <div class="ab wrn">⚠ &nbsp;"Sem adoção" exige cadência ativa do CS, não suporte reativo. "Contagem de prazos" não configurada representa risco operacional direto para o cliente.</div>
+    </div>
+  </div>
+
+  <!-- D -->
+  <div class="section">
+    <div class="section-header"><span class="lt">D</span> Verificações técnicas na interface</div>
+    <div class="sb">
+      <table class="tf">
+        <thead><tr><th>Verificação</th><th style="width:210px">Resultado</th></tr></thead>
+        <tbody>
+          <tr><td>Cadastro de processo</td><td><select><option>Funcionando</option><option>Com erro</option></select></td></tr>
+          <tr class="ev"><td>Registro de tramitação e prazo em processo teste</td><td><select><option>Funcionando</option><option>Com erro</option></select></td></tr>
+          <tr><td>Abertura de documento salvo no GED</td><td><select><option>Abre normalmente</option><option>Não abre (registrar no Bloco E)</option></select></td></tr>
+          <tr class="ev"><td>Geração de relatório básico de processos</td><td><select><option>Funcionando</option><option>Com erro</option></select></td></tr>
+          <tr><td>NF de teste emitida com sucesso (se NFS-e)</td><td><select><option>N/A</option><option>Sim</option><option>Não</option></select></td></tr>
+          <tr class="ev"><td>Publicação recebida e vinculada a processo (se integração ativa)</td><td><select><option>N/A</option><option>Sim</option><option>Não</option></select></td></tr>
+          <tr><td>Workflow disparado e concluído em processo teste (se configurado)</td><td><select><option>N/A</option><option>Sim</option><option>Não</option></select></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- E -->
+  <div class="section">
+    <div class="section-header"><span class="lt">E</span> Pendências em aberto</div>
+    <div class="hint">Bloqueante = impede operar → não encerrar. &nbsp;Relevante = degrada experiência → encerrar com prazo. &nbsp;Do cliente = depende de ação do cliente → registrar com responsável claro.</div>
+    <div class="sb">
+      <table class="tf">
+        <thead><tr><th>Descrição da pendência</th><th style="width:115px">Tipo</th><th style="width:115px">Criticidade</th><th style="width:105px">Responsável</th><th style="width:92px">Prazo</th></tr></thead>
+        <tbody>
+          <tr><td><input type="text"></td><td><select><option>—</option><option>Técnica</option><option>Configuração</option><option>Treinamento</option><option>Do cliente</option></select></td><td><select><option>—</option><option>Bloqueante</option><option>Relevante</option><option>Estética</option></select></td><td><input type="text"></td><td><input type="date"></td></tr>
+          <tr class="ev"><td><input type="text"></td><td><select><option>—</option><option>Técnica</option><option>Configuração</option><option>Treinamento</option><option>Do cliente</option></select></td><td><select><option>—</option><option>Bloqueante</option><option>Relevante</option><option>Estética</option></select></td><td><input type="text"></td><td><input type="date"></td></tr>
+          <tr><td><input type="text"></td><td><select><option>—</option><option>Técnica</option><option>Configuração</option><option>Treinamento</option><option>Do cliente</option></select></td><td><select><option>—</option><option>Bloqueante</option><option>Relevante</option><option>Estética</option></select></td><td><input type="text"></td><td><input type="date"></td></tr>
+        </tbody>
+      </table>
+      <div class="stitle" style="margin-top:1rem">Há pendência bloqueante?</div>
+      <div class="rg">
+        <label class="ri"><input type="radio" name="bl"> Não — cliente pode ser encerrado formalmente</label>
+        <label class="ri w"><input type="radio" name="bl"> Sim — NÃO encerrar. Responsável e prazo registrados acima.</label>
+      </div>
+    </div>
+  </div>
+
+  <!-- F -->
+  <div class="section">
+    <div class="section-header"><span class="lt">F</span> Eixo adoção</div>
+    <div class="sb">
+      <div class="stitle">O cliente opera o CPJ como sistema principal?</div>
+      <div class="rg">
+        <label class="ri"><input type="radio" name="pr"> Sim — CPJ é o sistema principal e o anterior foi desativado</label>
+        <label class="ri"><input type="radio" name="pr"> Parcialmente — sistema anterior ainda ativo, com prazo definido:&nbsp;<input type="date" style="display:inline;width:150px;font-size:12px;padding:3px 7px;border:1px solid #c8cdd6;border-radius:5px;"></label>
+        <label class="ri w"><input type="radio" name="pr"> Não — sistema anterior ainda ativo sem prazo concreto &nbsp;← risco de churn silencioso</label>
+      </div>
+
+      <div class="stitle">Todos os usuários previstos foram treinados?</div>
+      <div class="rg">
+        <label class="ri"><input type="radio" name="tr"> Sim — todos os usuários contratados foram treinados</label>
+        <label class="ri"><input type="radio" name="tr"> Parcialmente — somente ponto focal ou alguns usuários</label>
+        <label class="ri w"><input type="radio" name="tr"> Não — treinamento pendente &nbsp;← registrar no Bloco E</label>
+      </div>
+
+      <div class="stitle">O ponto focal executa as funções críticas sem depender do implementador?</div>
+      <div class="hint" style="margin-bottom:.6rem">Funções críticas: cadastrar processo · registrar tramitação · controlar prazo · emitir relatório básico · emitir NF (se aplicável)</div>
+      <div class="rg">
+        <label class="ri"><input type="radio" name="fo"> Sim — opera com autonomia</label>
+        <label class="ri"><input type="radio" name="fo"> Parcialmente — algumas funções ainda precisam de apoio</label>
+        <label class="ri w"><input type="radio" name="fo"> Não — dependência alta do suporte externo</label>
+      </div>
+
+      <div class="stitle">Usuários acessaram o sistema nos últimos 7 dias úteis?</div>
+      <div class="rg">
+        <label class="ri"><input type="radio" name="ac"> Sim — acessos regulares observados</label>
+        <label class="ri"><input type="radio" name="ac"> Parcialmente — apenas o ponto focal com acesso recente</label>
+        <label class="ri w"><input type="radio" name="ac"> Não — nenhum acesso recente verificado &nbsp;← sinal crítico de abandono</label>
+      </div>
+    </div>
+  </div>
+
+  <!-- G -->
+  <div class="section">
+    <div class="section-header"><span class="lt">G</span> Eixo satisfação</div>
+    <div class="sb">
+      <div class="stitle">Há sinais de insatisfação não verbalizada?</div>
+      <div class="hint" style="margin-bottom:.6rem">Sinais de alerta: "está tudo bem" + baixo engajamento + reuniões canceladas + respostas lentas + poucos usuários usando + sistema paralelo ainda ativo</div>
+      <div class="rg">
+        <label class="ri"><input type="radio" name="sa"> Não — cliente engajado e comunicativo durante todo o projeto</label>
+        <label class="ri w"><input type="radio" name="sa"> Sim, há sinais — descrever abaixo</label>
+        <label class="ri w"><input type="radio" name="sa"> Incerto — pouco contato para avaliar &nbsp;← acionar antes de encerrar</label>
+      </div>
+      <div class="fr1" style="margin-top:.6rem">
+        <div class="fl"><label>Se houver sinais, descreva o que foi observado</label><textarea placeholder="Descreva os comportamentos observados..."></textarea></div>
+      </div>
+
+      <div class="stitle">Contexto do negócio do escritório</div>
+      <div class="fl"><label>Informações que o CS precisa saber (momento da empresa, dinâmica interna, histórico relevante)</label>
+        <textarea rows="3" placeholder="Ex: escritório em expansão, sócio não participou do projeto, vai contratar 3 advogados em 60 dias..."></textarea>
+      </div>
+
+      <div class="stitle">O decisor / sócio está ciente do estado atual do projeto?</div>
+      <div class="rg">
+        <label class="ri"><input type="radio" name="de"> Sim — decisor acompanhou e está alinhado</label>
+        <label class="ri"><input type="radio" name="de"> Parcialmente — contato principal foi um intermediário</label>
+        <label class="ri w"><input type="radio" name="de"> Não — decisor não envolvido &nbsp;← risco de perda de patrocínio interno</label>
+      </div>
+
+      <div class="stitle">Perfil comportamental do cliente</div>
+      <div class="cg">
+        <label class="ci"><input type="checkbox"> Autônomo e comunicativo</label>
+        <label class="ci"><input type="checkbox"> Dependente de suporte — busca orientação com muita frequência</label>
+        <label class="ci"><input type="checkbox"> Escalador reflexo — vai à diretoria ao primeiro sinal de problema</label>
+        <label class="ci"><input type="checkbox"> Insatisfeito silencioso — risco de sumir após o encerramento</label>
+        <label class="ci"><input type="checkbox"> Técnico exigente — questiona configurações e comportamentos do sistema</label>
+      </div>
+      <div class="fl" style="margin-top:.8rem"><label>Observações sobre o perfil</label><textarea placeholder="Contexto adicional útil para o CS..."></textarea></div>
+
+      <div class="stitle">Se você fosse o CS recebendo esse cliente agora, o que te preocuparia?</div>
+      <div class="fl"><textarea rows="3" placeholder="Campo livre — o dado mais valioso costuma aparecer aqui."></textarea></div>
+    </div>
+  </div>
+
+  <!-- H -->
+  <div class="section">
+    <div class="section-header"><span class="lt">H</span> Oportunidades para o comercial</div>
+    <div class="sb">
+      <div class="stitle">Módulos ou add-ons não contratados com interesse demonstrado</div>
+      <div class="rg">
+        <label class="ri"><input type="radio" name="op"> Sim — descrever abaixo</label>
+        <label class="ri"><input type="radio" name="op"> Não identifiquei oportunidades neste momento</label>
+      </div>
+      <div class="fl" style="margin-top:.6rem"><label>Quais e qual o contexto</label><textarea placeholder="Ex: cliente perguntou sobre CRIA.AI durante o treinamento de GED..."></textarea></div>
+
+      <div class="stitle">Potencial de upgrade de pacote</div>
+      <div class="rg">
+        <label class="ri"><input type="radio" name="up"> Sim — contexto abaixo</label>
+        <label class="ri"><input type="radio" name="up"> Não — porte estável</label>
+        <label class="ri"><input type="radio" name="up"> Não avaliado</label>
+      </div>
+      <div class="fl" style="margin-top:.6rem"><label>Contexto da oportunidade</label><textarea></textarea></div>
+    </div>
+  </div>
+
+  <!-- I -->
+  <div class="section">
+    <div class="section-header"><span class="lt">I</span> TAG Alarme e observações finais</div>
+    <div class="sb">
+      <div class="stitle">TAG Alarme</div>
+      <div class="tab-blk">
+        <button type="button" class="tbtn g" id="tag-ok" onclick="selectTag(&#39;ok&#39;)">✓ &nbsp;Sem alarme — cliente saudável, sem risco imediato identificado</button>
+        <button type="button" class="tbtn r" id="tag-al" onclick="selectTag(&#39;al&#39;)">⚠ &nbsp;Alarme ativo — comunicar à gestão antes de encerrar formalmente</button>
+      </div>
+      <div class="fl" style="margin-top:1.2rem">
+        <label>Observações finais para as áreas receptoras</label>
+        <textarea rows="4" placeholder="Contexto e alertas que não cabem nos campos acima..."></textarea>
+      </div>
+    </div>
+  </div>
+
+  <div class="submit-bar">
+    <span>Preâmbulo Tech &nbsp;·&nbsp; Diretoria de Operações &nbsp;·&nbsp; Encerramento CPJ-3C</span>
+    <button type="button" onclick="finalizar()">Finalizar handoff →</button>
+  </div>
+
+  <div class="confirm-msg" id="confirm-msg">✓ &nbsp;Handoff registrado com sucesso. O formulário pode ser salvo ou impresso.</div>
+</div>
+
+<script>
+// Configurações base
+const cfgItens = [
+  "Matérias","Tipos de prazos","Eventos","Células e equipes",
+  "Marcadores","Grupos de trabalho","Classificação de publicações"
+];
+const ctb = document.getElementById('cfg-tbody');
+cfgItens.forEach((nm, i) => {
+  const sid = 'cfg' + i, pid = 'pnd' + i;
+  const tr = document.createElement('tr');
+  if (i % 2) tr.className = 'ev';
+  tr.innerHTML = `
+    <td>${nm}</td>
+    <td>
+      <select id="${sid}" onchange="togglePend('${sid}','${pid}')">
+        <option>Personalizado para o escritório</option>
+        <option>Padrão do sistema</option>
+        <option>Pendente</option>
+      </select>
+      <div class="pend-box" id="${pid}">
+        <textarea placeholder="Descreva a pendência..."></textarea>
+      </div>
+    </td>
+    <td><select><option>Sim</option><option>Não</option></select></td>`;
+  ctb.appendChild(tr);
+});
+
+function togglePend(sid, pid) {
+  const sel = document.getElementById(sid);
+  document.getElementById(pid).style.display = sel.value === 'Pendente' ? 'block' : 'none';
+}
+
+// Itens do sistema
+const modulos = [
+  { nm: 'Processos' },
+  { nm: 'Pessoas' },
+  { nm: 'Tramitação' },
+  { nm: 'Contagem de prazos ⚠' },
+  { nm: 'Timesheet' },
+  { nm: 'Contratos e modelos de honorários' },
+  { nm: 'Tarefas e agenda' },
+  { nm: 'Financeiro — contas a pagar/receber' },
+  { nm: 'GED' },
+  { nm: 'Publicações' },
+  { nm: 'Monitoramento' },
+  { nm: 'NFS-e', obs: 'NF de teste emitida com sucesso?' },
+  { nm: 'Gerador de documentos' },
+  { nm: 'Intimações' },
+  { nm: 'Workflow', wf: true },
+];
+
+const wfTipos = ['Fluxo simplificado', 'Padrão', 'Audiências', 'SPF', 'Personalizado'];
+const mtb = document.getElementById('mod-tbody');
+
+modulos.forEach((m, i) => {
+  const tr = document.createElement('tr');
+  if (i % 2) tr.className = 'ev';
+
+  const stSel = `<select id="mst${i}" onchange="toggleWf(${i})">
+    <option>Em uso</option>
+    <option>Sem adoção</option>
+    <option>Parcial</option>
+    <option>Não configurado</option>
+    <option>N/A</option>
+  </select>`;
+
+  let obsHtml;
+  if (m.wf) {
+    const tags = wfTipos.map(t =>
+      `<span class="wf-tag" onclick="this.classList.toggle('on')">${t}</span>`
+    ).join('');
+    obsHtml = `<div class="wfc">
+      <div class="wf-tags" id="wft${i}">${tags}</div>
+      <input type="text" placeholder="Observações adicionais" style="font-size:12px;padding:4px 7px;border:1px solid #c8cdd6;border-radius:5px;width:100%;margin-top:3px;">
+    </div>`;
+  } else {
+    obsHtml = `<input type="text"${m.obs ? ` placeholder="${m.obs}"` : ''}>`;
+  }
+
+  tr.innerHTML = `<td>${m.nm}</td><td>${stSel}</td><td>${obsHtml}</td>`;
+  mtb.appendChild(tr);
+});
+
+function toggleWf(i) {
+  const wft = document.getElementById('wft' + i);
+  if (!wft) return;
+  const val = document.getElementById('mst' + i).value;
+  wft.style.display = (val === 'N/A' || val === 'Não configurado') ? 'none' : 'flex';
+}
+
+// Migração
+const mc = document.getElementById('mig-chk');
+const ms = document.getElementById('mig-sel');
+const mo = document.getElementById('mig-outro');
+mc.addEventListener('change', () => {
+  ms.style.display = mc.checked ? 'inline-block' : 'none';
+  if (!mc.checked) { mo.style.display = 'none'; ms.value = ''; }
+});
+ms.addEventListener('change', () => {
+  mo.style.display = ms.value === 'Outro' ? 'inline-block' : 'none';
+});
+
+// TAG Alarme
+function selectTag(which) {
+  document.getElementById('tag-ok').classList.toggle('selected', which === 'ok');
+  document.getElementById('tag-al').classList.toggle('selected', which === 'al');
+}
+
+// Finalizar
+function finalizar() {
+  const msg = document.getElementById('confirm-msg');
+  msg.style.display = 'block';
+  msg.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+</script>
+
+
+</body></html>
