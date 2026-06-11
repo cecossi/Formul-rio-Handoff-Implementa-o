@@ -384,18 +384,40 @@
 <script>
 // Configurações base
 const cfgItens = [
-  "Matérias","Tipos de prazos","Eventos","Células e equipes",
-  "Marcadores","Grupos de trabalho","Classificação de publicações"
+  { nm: "Matérias" },
+  { nm: "Tipos de prazos" },
+  { nm: "Eventos" },
+  { nm: "Células e equipes" },
+  { nm: "Marcadores" },
+  { nm: "Grupos de trabalho" },
+  { nm: "Classificação de publicações" },
+  { nm: "Relatórios" },
+  { nm: "Publicações", pub: true },
 ];
 const ctb = document.getElementById('cfg-tbody');
-cfgItens.forEach((nm, i) => {
+cfgItens.forEach((item, i) => {
+  const nm = item.nm;
   const sid = 'cfg' + i, pid = 'pnd' + i;
   const tr = document.createElement('tr');
   if (i % 2) tr.className = 'ev';
+
+  const pubHtml = item.pub ? `
+    <div id="pub${i}" style="margin-top:5px;">
+      <select id="pub-sel${i}" onchange="togglePubOutro(${i})" style="font-size:12px;padding:4px 7px;border:1px solid #c8cdd6;border-radius:5px;width:100%;margin-bottom:3px;background:#fff;color:#2D2D2D;font-family:inherit;">
+        <option value="">— fornecedor —</option>
+        <option>Leijud</option>
+        <option>Solucionare</option>
+        <option>DW</option>
+        <option>Webjur</option>
+        <option>Outro</option>
+      </select>
+      <input type="text" id="pub-outro${i}" placeholder="Qual fornecedor?" style="display:none;font-size:12px;padding:4px 7px;border:1px solid #c8cdd6;border-radius:5px;width:100%;font-family:inherit;">
+    </div>` : '';
+
   tr.innerHTML = `
     <td>${nm}</td>
     <td>
-      <select id="${sid}" onchange="togglePend('${sid}','${pid}')">
+      <select id="${sid}" onchange="toggleCfg('${sid}','${pid}',${item.pub ? i : -1})">
         <option>Personalizado para o escritório</option>
         <option>Padrão do sistema</option>
         <option>Pendente</option>
@@ -404,14 +426,25 @@ cfgItens.forEach((nm, i) => {
       <div class="pend-box" id="${pid}">
         <textarea placeholder="Descreva a pendência..."></textarea>
       </div>
+      ${pubHtml}
     </td>
     <td><select><option>Sim</option><option>Não</option><option>Não se aplica</option></select></td>`;
   ctb.appendChild(tr);
 });
 
-function togglePend(sid, pid) {
+function toggleCfg(sid, pid, pubIdx) {
   const sel = document.getElementById(sid);
   document.getElementById(pid).style.display = sel.value === 'Pendente' ? 'block' : 'none';
+  if (pubIdx >= 0) {
+    document.getElementById('pub' + pubIdx).style.display =
+      sel.value === 'Não se aplica' ? 'none' : 'block';
+  }
+}
+
+function togglePubOutro(i) {
+  const sel = document.getElementById('pub-sel' + i);
+  document.getElementById('pub-outro' + i).style.display =
+    sel.value === 'Outro' ? 'block' : 'none';
 }
 
 // Itens do sistema
