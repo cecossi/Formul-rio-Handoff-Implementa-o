@@ -4,9 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Handoff Implementação — CPJ-3C</title>
+<script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: Calibri, 'Segoe UI', sans-serif; font-size: 14px; background: #f0f2f5; color: #2D2D2D; padding: 2rem 1rem; }
+  .form-wrap { display: none; }
+  #auth-gate { text-align: center; padding: 3rem 1rem; font-family: Calibri, sans-serif; color: #343748; }
+  #auth-gate p { margin-top: .5rem; font-size: 13px; color: #888; }
   .form-wrap { max-width: 820px; margin: 0 auto; }
 
   .form-header { background: #343748; color: #fff; padding: 1.4rem 1.75rem; border-radius: 10px 10px 0 0; display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; }
@@ -90,6 +94,11 @@
 </style>
 </head>
 <body>
+<div id="auth-gate">
+  <h2 style="font-size:18px;font-weight:700;">Verificando acesso...</h2>
+  <p>Este formulário é de uso interno da Preâmbulo Tech.</p>
+</div>
+
 <div class="form-wrap">
 
   <div class="form-header">
@@ -479,6 +488,25 @@ ms.addEventListener('change', () => {
 function selectTag(which) {
   document.getElementById('tag-ok').classList.toggle('selected', which === 'ok');
   document.getElementById('tag-al').classList.toggle('selected', which === 'al');
+}
+
+// Auth gate
+if (window.netlifyIdentity) {
+  window.netlifyIdentity.on('init', user => {
+    if (user) {
+      document.getElementById('auth-gate').style.display = 'none';
+      document.querySelector('.form-wrap').style.display = 'block';
+    } else {
+      document.getElementById('auth-gate').innerHTML =
+        '<h2 style="font-size:18px;font-weight:700;">Acesso restrito</h2><p>Este formulário é de uso interno da Preâmbulo Tech.<br>Faça login para continuar.</p>';
+      window.netlifyIdentity.open();
+      window.netlifyIdentity.on('login', () => {
+        document.getElementById('auth-gate').style.display = 'none';
+        document.querySelector('.form-wrap').style.display = 'block';
+        window.netlifyIdentity.close();
+      });
+    }
+  });
 }
 
 // Finalizar
