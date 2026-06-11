@@ -189,8 +189,8 @@
       <table class="tf">
         <thead><tr><th>Item</th><th style="width:270px">Situação</th></tr></thead>
         <tbody>
-          <tr><td>Perfis de acesso configurados adequadamente</td><td><select><option>Sim</option><option>Parcialmente</option><option>Não — padrão genérico</option></select></td></tr>
-          <tr class="ev"><td>Senhas padrão alteradas pelos usuários</td><td><select><option>Sim</option><option>Não</option><option>Parcialmente</option></select></td></tr>
+          <tr><td>Perfis de acesso configurados adequadamente</td><td><select><option>Sim</option><option>Parcialmente</option><option>Não — padrão genérico</option><option>Não se aplica</option></select></td></tr>
+          <tr class="ev"><td>Senhas padrão alteradas pelos usuários</td><td><select><option>Sim</option><option>Não</option><option>Parcialmente</option><option>Não se aplica</option></select></td></tr>
           <tr><td>Usuário administrador local identificado e treinado</td><td><input type="text" placeholder="Nome do usuário no CPJ"></td></tr>
         </tbody>
       </table>
@@ -217,13 +217,13 @@
       <table class="tf">
         <thead><tr><th>Verificação</th><th style="width:210px">Resultado</th></tr></thead>
         <tbody>
-          <tr><td>Cadastro de processo</td><td><select><option>Funcionando</option><option>Com erro</option></select></td></tr>
-          <tr class="ev"><td>Registro de tramitação e prazo em processo teste</td><td><select><option>Funcionando</option><option>Com erro</option></select></td></tr>
-          <tr><td>Abertura de documento salvo no GED</td><td><select><option>Abre normalmente</option><option>Não abre (registrar no Bloco E)</option></select></td></tr>
-          <tr class="ev"><td>Geração de relatório básico de processos</td><td><select><option>Funcionando</option><option>Com erro</option></select></td></tr>
-          <tr><td>NF de teste emitida com sucesso (se NFS-e)</td><td><select><option>N/A</option><option>Sim</option><option>Não</option></select></td></tr>
-          <tr class="ev"><td>Publicação recebida e vinculada a processo (se integração ativa)</td><td><select><option>N/A</option><option>Sim</option><option>Não</option></select></td></tr>
-          <tr><td>Workflow disparado e concluído em processo teste (se configurado)</td><td><select><option>N/A</option><option>Sim</option><option>Não</option></select></td></tr>
+          <tr><td>Cadastro de processo</td><td><select><option>Funcionando</option><option>Com erro</option><option>Não se aplica</option></select></td></tr>
+          <tr class="ev"><td>Registro de tramitação e prazo em processo teste</td><td><select><option>Funcionando</option><option>Com erro</option><option>Não se aplica</option></select></td></tr>
+          <tr><td>Abertura de documento salvo no GED</td><td><select><option>Abre normalmente</option><option>Não abre (registrar no Bloco E)</option><option>Não se aplica</option></select></td></tr>
+          <tr class="ev"><td>Geração de relatório básico de processos</td><td><select><option>Funcionando</option><option>Com erro</option><option>Não se aplica</option></select></td></tr>
+          <tr><td>NF de teste emitida com sucesso (se NFS-e)</td><td><select><option>Não se aplica</option><option>Sim</option><option>Não</option></select></td></tr>
+          <tr class="ev"><td>Publicação recebida e vinculada a processo (se integração ativa)</td><td><select><option>Não se aplica</option><option>Sim</option><option>Não</option></select></td></tr>
+          <tr><td>Workflow disparado e concluído em processo teste (se configurado)</td><td><select><option>Não se aplica</option><option>Sim</option><option>Não</option></select></td></tr>
         </tbody>
       </table>
     </div>
@@ -390,12 +390,13 @@ cfgItens.forEach((nm, i) => {
         <option>Personalizado para o escritório</option>
         <option>Padrão do sistema</option>
         <option>Pendente</option>
+        <option>Não se aplica</option>
       </select>
       <div class="pend-box" id="${pid}">
         <textarea placeholder="Descreva a pendência..."></textarea>
       </div>
     </td>
-    <td><select><option>Sim</option><option>Não</option></select></td>`;
+    <td><select><option>Sim</option><option>Não</option><option>Não se aplica</option></select></td>`;
   ctb.appendChild(tr);
 });
 
@@ -435,7 +436,7 @@ modulos.forEach((m, i) => {
     <option>Sem adoção</option>
     <option>Parcial</option>
     <option>Não configurado</option>
-    <option>N/A</option>
+    <option>Não se aplica</option>
   </select>`;
 
   let obsHtml;
@@ -459,7 +460,7 @@ function toggleWf(i) {
   const wft = document.getElementById('wft' + i);
   if (!wft) return;
   const val = document.getElementById('mst' + i).value;
-  wft.style.display = (val === 'N/A' || val === 'Não configurado') ? 'none' : 'flex';
+  wft.style.display = (val === 'Não se aplica' || val === 'Não configurado') ? 'none' : 'flex';
 }
 
 // Migração
