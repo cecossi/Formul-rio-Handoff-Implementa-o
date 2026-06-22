@@ -82,6 +82,9 @@
   .submit-bar button:hover { background: #3a4bbf; }
 
   .confirm-msg { display: none; background: #eaf6e1; color: #2d6011; border: 1px solid #5a9e30; border-radius: 8px; padding: .8rem 1.2rem; margin-top: 1rem; font-size: 13px; font-weight: 600; text-align: center; }
+  .field-hint { font-size: 11px; color: #888; margin-top: 3px; font-style: italic; line-height: 1.4; }
+  .sub-input { margin-top: 5px; padding-left: 22px; display: none; }
+  .sub-input input[type=text] { font-size: 12px; padding: 4px 7px; border: 1px solid #c8cdd6; border-radius: 5px; width: 100%; font-family: inherit; }
 
   @media (max-width: 600px) {
     .fr2 { grid-template-columns: 1fr; }
@@ -150,8 +153,8 @@
         <div class="fl"><label>PMO responsável</label><input type="text"></div>
       </div>
       <div class="fr2">
-        <div class="fl"><label>Data do handoff</label><input type="date"></div>
-        <div class="fl"><label>Duração (dias corridos)</label><input type="number" placeholder="Ex: 28"></div>
+        <div class="fl"><label>Data do handoff</label><input type="date"><div class="field-hint">Data em que este formulário está sendo preenchido.</div></div>
+        <div class="fl"><label>Duração (dias corridos)</label><input type="number" placeholder="Ex: 28"><div class="field-hint">Início = data de disponibilização do projeto para o implementador no CRM · Fim = data da última reunião realizada com o cliente.</div></div>
       </div>
       <div class="fr2">
         <div class="fl"><label>Nome do escritório / departamento jurídico</label><input type="text"></div>
@@ -192,11 +195,21 @@
           </select>
           <input type="text" id="mig-outro" placeholder="Qual sistema?" style="display:none;margin-left:6px;width:130px;font-size:12px;padding:4px 7px;border:1px solid #c8cdd6;border-radius:5px;">
         </label>
-        <label class="ci"><input type="checkbox"> Discovery via OAB</label>
-        <label class="ci"><input type="checkbox"> Discovery via CNJ / CPF / CNPJ</label>
+        <div>
+          <label class="ci"><input type="checkbox" id="oab-chk" onchange="toggleSub('oab-chk','oab-sub')"> Discovery via OAB</label>
+          <div class="sub-input" id="oab-sub"><input type="text" placeholder="OABs consultadas (ex: SP, RJ, MG)"></div>
+        </div>
+        <div>
+          <label class="ci"><input type="checkbox" id="cpf-chk" onchange="toggleSub('cpf-chk','cpf-sub')"> Discovery via CNJ / CPF / CNPJ</label>
+          <div class="sub-input" id="cpf-sub"><input type="text" placeholder="CPFs / CNPJs consultados"></div>
+        </div>
         <label class="ci"><input type="checkbox"> Planilha padrão Preâmbulo</label>
         <label class="ci"><input type="checkbox"> Planilha personalizada</label>
         <label class="ci"><input type="checkbox"> Base zerada — cliente cadastrou manualmente</label>
+        <div>
+          <label class="ci"><input type="checkbox" id="copia-chk" onchange="toggleSub('copia-chk','copia-sub')"> Cópia de base</label>
+          <div class="sub-input" id="copia-sub"><input type="text" placeholder="Nome do escritório de origem"></div>
+        </div>
       </div>
     </div>
   </div>
@@ -209,7 +222,7 @@
 
       <div class="stitle">Ambiente de instalação</div>
       <div class="rg" style="flex-direction:row;gap:1.5rem;flex-wrap:wrap;">
-        <label class="ri"><input type="radio" name="amb"> On-premise</label>
+        <label class="ri"><input type="radio" name="amb"> On-premise (ambiente local)</label>
         <label class="ri"><input type="radio" name="amb"> Preâmbulo Cloud</label>
         <label class="ri"><input type="radio" name="amb"> Cloud externa (cliente gerencia)</label>
       </div>
@@ -535,6 +548,12 @@ function toggleWf(i) {
   if (!wft) return;
   const val = document.getElementById('mst' + i).value;
   wft.style.display = (val === 'Não se aplica' || val === 'Não configurado') ? 'none' : 'flex';
+}
+
+// Sub-campos condicionais
+function toggleSub(chkId, subId) {
+  document.getElementById(subId).style.display =
+    document.getElementById(chkId).checked ? 'block' : 'none';
 }
 
 // Migração
