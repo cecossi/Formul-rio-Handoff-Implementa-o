@@ -111,6 +111,10 @@ table.tf select, table.tf input[type=text], table.tf input[type=date] { font-siz
 .submit-bar button:hover { opacity: .88; }
 
 .confirm-msg { display: none; background: var(--green-bg); color: var(--green); border: 1px solid #b8d89c; border-radius: var(--radius); padding: .8rem 1.2rem; margin-top: 1rem; font-size: 13px; font-weight: 600; text-align: center; }
+
+.footer { background: var(--charcoal); color: rgba(255,255,255,0.55); border-radius: var(--radius); padding: 14px 24px; margin-top: 8px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; font-size: 11px; font-weight: 500; letter-spacing: .2px; }
+.footer strong { color: rgba(255,255,255,.85); font-weight: 700; }
+.footer-badge { width: 20px; height: 20px; border-radius: 50%; background: linear-gradient(135deg,var(--navy),#6B7DE0); display: inline-flex; align-items: center; justify-content: center; font-family: 'Montserrat', sans-serif; font-size: 8px; font-weight: 800; color: #fff; letter-spacing: .02em; vertical-align: middle; margin-left: 8px; }
 .field-hint { font-size: 11px; color: var(--gray); margin-top: 3px; font-style: italic; line-height: 1.4; }
 .sub-input { margin-top: 5px; padding-left: 22px; display: none; }
 .sub-input input[type=text] { font-size: 12px; padding: 4px 7px; border: 1px solid var(--border); border-radius: 5px; width: 100%; font-family: inherit; }
@@ -196,12 +200,7 @@ table.tf select, table.tf input[type=text], table.tf input[type=date] { font-siz
       </div>
       <div class="fr2">
         <div class="fl"><label>Atendimentos realizados</label><input type="number" placeholder="Ex: 12"></div>
-        <div class="fl"><label>Versão do sistema</label>
-          <div class="cg" style="flex-direction:row;flex-wrap:wrap;gap:.4rem 1.2rem;margin-top:7px;">
-            <label class="ci"><input type="radio" name="ver"> Client-server (Delphi)</label>
-            <label class="ci"><input type="radio" name="ver"> CPJ3C+ (Cloud / Leviatan)</label>
-          </div>
-        </div>
+        <div class="fl"><label>Versão do sistema</label><input type="text" placeholder="Ex: H04.53.001"></div>
       </div>
 
       <div class="stitle">Usuários</div>
@@ -290,13 +289,17 @@ table.tf select, table.tf input[type=text], table.tf input[type=date] { font-siz
       <div class="fl"><label>Robôs ativos</label>
         <div class="cg" style="flex-direction:row;flex-wrap:wrap;gap:.4rem 1.4rem;margin-top:6px;">
           <label class="ci"><input type="checkbox"> 003 — Importador de eventos/tarefas/documentos</label>
+          <label class="ci"><input type="checkbox"> 006</label>
           <label class="ci"><input type="checkbox"> 082 — Importador de fichas/pessoas/tarefas</label>
-          <label class="ci"><input type="checkbox"> 126 — Importador de fichas</label>
           <label class="ci"><input type="checkbox"> 102 — Regras de distribuição</label>
+          <label class="ci"><input type="checkbox"> 115</label>
+          <label class="ci"><input type="checkbox"> 126 — Importador de fichas</label>
           <label class="ci"><input type="checkbox"> 129 — Sincronismo de acordos</label>
           <label class="ci"><input type="checkbox"> 149 — Abertura automatizada de pastas</label>
+          <label class="ci"><input type="checkbox"> 152</label>
           <label class="ci"><input type="checkbox"> Nenhum robô ativo</label>
         </div>
+        <input type="text" placeholder="Outros robôs (especifique)" style="margin-top:8px;max-width:320px">
       </div>
       <div class="fr2" style="margin-top:1rem">
         <div class="fl"><label>API em uso</label>
@@ -545,6 +548,11 @@ table.tf select, table.tf input[type=text], table.tf input[type=date] { font-siz
   </div>
 
   <div class="confirm-msg" id="confirm-msg">✓ &nbsp;Handoff registrado com sucesso. O formulário pode ser salvo ou impresso.</div>
+
+  <div class="footer">
+    <span><strong>Preâmbulo Tech</strong> · CPJ-3C · Diretoria de Operações <span class="footer-badge">BKC</span></span>
+    <span>Atualizado em <span id="foot-date"></span></span>
+  </div>
 </div>
 
 <script>
@@ -730,6 +738,9 @@ function finalizar() {
   msg.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   setTimeout(() => window.print(), 300);
 }
+
+// Rodapé
+document.getElementById('foot-date').textContent = new Date().toLocaleDateString('pt-BR');
 </script>
 </body>
 </html>
