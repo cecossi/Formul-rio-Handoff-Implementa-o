@@ -115,6 +115,7 @@ table.tf select, table.tf input[type=text], table.tf input[type=date] { font-siz
 .footer { background: var(--charcoal); color: rgba(255,255,255,0.55); border-radius: var(--radius); padding: 14px 24px; margin-top: 8px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; font-size: 11px; font-weight: 500; letter-spacing: .2px; }
 .footer strong { color: rgba(255,255,255,.85); font-weight: 700; }
 .footer-badge { width: 20px; height: 20px; border-radius: 50%; background: linear-gradient(135deg,var(--navy),#6B7DE0); display: inline-flex; align-items: center; justify-content: center; font-family: 'Montserrat', sans-serif; font-size: 8px; font-weight: 800; color: #fff; letter-spacing: .02em; vertical-align: middle; margin-left: 8px; }
+.icn { width: 14px; height: 14px; vertical-align: -2px; margin-right: 5px; flex-shrink: 0; }
 .field-hint { font-size: 11px; color: var(--gray); margin-top: 3px; font-style: italic; line-height: 1.4; }
 .sub-input { margin-top: 5px; padding-left: 22px; display: none; }
 .sub-input input[type=text] { font-size: 12px; padding: 4px 7px; border: 1px solid var(--border); border-radius: 5px; width: 100%; font-family: inherit; }
@@ -274,9 +275,15 @@ table.tf select, table.tf input[type=text], table.tf input[type=date] { font-siz
 
       <div class="stitle">Ambiente de instalação</div>
       <div class="rg" style="flex-direction:row;gap:1.5rem;flex-wrap:wrap;">
-        <label class="ri"><input type="radio" name="amb"> On-premise (ambiente local)</label>
+        <label class="ri"><input type="radio" name="amb" id="amb-onprem"> On-premise (ambiente local)</label>
         <label class="ri"><input type="radio" name="amb"> Preâmbulo Cloud</label>
         <label class="ri"><input type="radio" name="amb"> Cloud externa (cliente gerencia)</label>
+      </div>
+      <div class="fl" id="backup-wrap" style="display:none;margin-top:.8rem;max-width:340px"><label>Rotina de backup confirmada</label>
+        <select>
+          <option>Sim — confirmada com o cliente</option>
+          <option>Não confirmada</option>
+        </select>
       </div>
 
       <div class="stitle">Suporte técnico do cliente</div>
@@ -297,28 +304,19 @@ table.tf select, table.tf input[type=text], table.tf input[type=date] { font-siz
           <label class="ci"><input type="checkbox"> 129 — Sincronismo de acordos</label>
           <label class="ci"><input type="checkbox"> 149 — Abertura automatizada de pastas</label>
           <label class="ci"><input type="checkbox"> 152</label>
-          <label class="ci"><input type="checkbox"> Nenhum robô ativo</label>
+          <label class="ci" style="width:100%;border-top:1px solid var(--border);margin-top:6px;padding-top:8px;font-weight:700;"><input type="checkbox"> Nenhum robô ativo</label>
         </div>
         <input type="text" placeholder="Outros robôs (especifique)" style="margin-top:8px;max-width:320px">
       </div>
-      <div class="fr2" style="margin-top:1rem">
-        <div class="fl"><label>API em uso</label>
-          <select>
-            <option>Nenhuma</option>
-            <option>V2</option>
-            <option>V3</option>
-            <option>Serviços (protocolos/cópias)</option>
-            <option>Publicações</option>
-            <option>FULL</option>
-            <option>CRIA.AI</option>
-          </select>
-        </div>
-        <div class="fl"><label>Rotina de backup confirmada</label>
-          <select>
-            <option>Não se aplica (não é on-premise)</option>
-            <option>Sim — confirmada com o cliente</option>
-            <option>Não confirmada</option>
-          </select>
+      <div class="fl" style="margin-top:1rem"><label>API em uso</label>
+        <div class="cg" style="flex-direction:row;flex-wrap:wrap;gap:.4rem 1.4rem;margin-top:6px;">
+          <label class="ci"><input type="checkbox"> V2</label>
+          <label class="ci"><input type="checkbox"> V3</label>
+          <label class="ci"><input type="checkbox"> Serviços (protocolos/cópias)</label>
+          <label class="ci"><input type="checkbox"> Publicações</label>
+          <label class="ci"><input type="checkbox"> FULL</label>
+          <label class="ci"><input type="checkbox"> CRIA.AI</label>
+          <label class="ci"><input type="checkbox"> Nenhuma</label>
         </div>
       </div>
       <div class="fl" style="margin-top:1rem"><label>Certificado digital para NFS-e</label>
@@ -335,13 +333,13 @@ table.tf select, table.tf input[type=text], table.tf input[type=date] { font-siz
         <thead><tr><th>Configuração</th><th style="width:230px">Status</th><th style="width:95px">Validado?</th></tr></thead>
         <tbody id="cfg-tbody"></tbody>
       </table>
-      <div class="ab inf">ℹ &nbsp;"Padrão do sistema" indica que o cliente vai operar com valores genéricos que podem não refletir o fluxo real do escritório — sinalizar como ponto de atenção para o CS.</div>
+      <div class="ab inf"><svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>"Padrão do sistema" indica que o cliente vai operar com valores genéricos que podem não refletir o fluxo real do escritório — sinalizar como ponto de atenção para o CS.</div>
 
       <div class="stitle">Usuários e perfis de acesso</div>
       <table class="tf">
         <thead><tr><th>Item</th><th style="width:270px">Situação</th></tr></thead>
         <tbody>
-          <tr><td>Perfis de acesso configurados adequadamente</td><td><select><option>Sim</option><option>Parcialmente</option><option>Não — padrão genérico</option><option>Não se aplica</option></select></td></tr>
+          <tr><td>Perfis de acesso configurados</td><td><select><option>Sim — personalizados para o escritório</option><option>Sim — padrão genérico (não customizado)</option><option>Parcialmente</option><option>Não configurados</option><option>Não se aplica</option></select></td></tr>
           <tr class="ev"><td>Senhas padrão alteradas pelos usuários</td><td><select><option>Sim</option><option>Não</option><option>Parcialmente</option><option>Não se aplica</option></select></td></tr>
           <tr><td>Usuário administrador local identificado e treinado</td><td><input type="text" placeholder="Nome do usuário no CPJ"></td></tr>
         </tbody>
@@ -358,7 +356,7 @@ table.tf select, table.tf input[type=text], table.tf input[type=date] { font-siz
         <thead><tr><th>Item</th><th style="width:175px">Status</th><th>Observações</th></tr></thead>
         <tbody id="mod-tbody"></tbody>
       </table>
-      <div class="ab wrn">⚠ &nbsp;"Sem adoção" exige cadência ativa do CS, não suporte reativo. "Contagem de prazos" não configurada representa risco operacional direto para o cliente.</div>
+      <div class="ab wrn"><svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z"/><path d="M12 9v4M12 17h.01"/></svg>"Sem adoção" exige cadência ativa do CS, não suporte reativo. "Contagem de prazos" não configurada representa risco operacional direto para o cliente.</div>
     </div>
   </div>
 
@@ -390,9 +388,9 @@ table.tf select, table.tf input[type=text], table.tf input[type=date] { font-siz
       <table class="tf">
         <thead><tr><th>Descrição da pendência</th><th style="width:125px">Tipo</th><th style="width:110px">Criticidade</th><th style="width:100px">Responsável</th><th style="width:90px">Prazo</th></tr></thead>
         <tbody>
-          <tr><td><input type="text"></td><td><select><option>—</option><option>Técnica</option><option>Configuração</option><option>Treinamento</option><option>Do cliente</option><option>Fornecedor externo</option><option>Produto / desenvolvimento</option></select></td><td><select><option>—</option><option>Bloqueante</option><option>Relevante</option><option>Estética</option></select></td><td><input type="text"></td><td><input type="date"></td></tr>
-          <tr class="ev"><td><input type="text"></td><td><select><option>—</option><option>Técnica</option><option>Configuração</option><option>Treinamento</option><option>Do cliente</option><option>Fornecedor externo</option><option>Produto / desenvolvimento</option></select></td><td><select><option>—</option><option>Bloqueante</option><option>Relevante</option><option>Estética</option></select></td><td><input type="text"></td><td><input type="date"></td></tr>
-          <tr><td><input type="text"></td><td><select><option>—</option><option>Técnica</option><option>Configuração</option><option>Treinamento</option><option>Do cliente</option><option>Fornecedor externo</option><option>Produto / desenvolvimento</option></select></td><td><select><option>—</option><option>Bloqueante</option><option>Relevante</option><option>Estética</option></select></td><td><input type="text"></td><td><input type="date"></td></tr>
+          <tr><td><input type="text"></td><td><select><option>—</option><option>Técnica</option><option>Configuração</option><option>Treinamento</option><option>Do cliente</option><option>Fornecedor externo</option><option>Produto / desenvolvimento</option></select></td><td><select><option>—</option><option>Bloqueante</option><option>Relevante</option><option>Estética</option><option>Melhoria de produto</option></select></td><td><input type="text"></td><td><input type="date"></td></tr>
+          <tr class="ev"><td><input type="text"></td><td><select><option>—</option><option>Técnica</option><option>Configuração</option><option>Treinamento</option><option>Do cliente</option><option>Fornecedor externo</option><option>Produto / desenvolvimento</option></select></td><td><select><option>—</option><option>Bloqueante</option><option>Relevante</option><option>Estética</option><option>Melhoria de produto</option></select></td><td><input type="text"></td><td><input type="date"></td></tr>
+          <tr><td><input type="text"></td><td><select><option>—</option><option>Técnica</option><option>Configuração</option><option>Treinamento</option><option>Do cliente</option><option>Fornecedor externo</option><option>Produto / desenvolvimento</option></select></td><td><select><option>—</option><option>Bloqueante</option><option>Relevante</option><option>Estética</option><option>Melhoria de produto</option></select></td><td><input type="text"></td><td><input type="date"></td></tr>
         </tbody>
       </table>
       <div class="stitle" style="margin-top:1rem">Há pendência bloqueante?</div>
@@ -498,11 +496,22 @@ table.tf select, table.tf input[type=text], table.tf input[type=date] { font-siz
         <label class="ci"><input type="checkbox"> Preâmbulo Bank</label>
         <label class="ci"><input type="checkbox"> CRIA.AI (peças / cadastro Maestro)</label>
         <label class="ci"><input type="checkbox"> CPJ Safe</label>
+        <label class="ci"><input type="checkbox"> CPJ Cobrança</label>
         <label class="ci"><input type="checkbox"> Financeiro Avançado</label>
         <label class="ci"><input type="checkbox"> Intimação Eletrônica</label>
         <label class="ci"><input type="checkbox"> Protocolo</label>
         <label class="ci"><input type="checkbox"> API Full</label>
         <label class="ci"><input type="checkbox"> Controladoria Avançada</label>
+        <label class="ci"><input type="checkbox"> Consultoria</label>
+        <label class="ci"><input type="checkbox"> Jarvis</label>
+        <div>
+          <label class="ci"><input type="checkbox" id="rob-op-chk" onchange="toggleSub('rob-op-chk','rob-op-sub')"> Robôs</label>
+          <div class="sub-input" id="rob-op-sub"><input type="text" placeholder="Qual robô/automação?"></div>
+        </div>
+        <div>
+          <label class="ci"><input type="checkbox" id="outro-op-chk" onchange="toggleSub('outro-op-chk','outro-op-sub')"> Outro produto ou serviço</label>
+          <div class="sub-input" id="outro-op-sub"><input type="text" placeholder="Qual produto/serviço?"></div>
+        </div>
         <label class="ci"><input type="checkbox"> Nenhum identificado neste momento</label>
       </div>
       <div class="fl" style="margin-top:.6rem"><label>Contexto de cada interesse identificado</label><textarea placeholder="Ex: cliente perguntou sobre CRIA.AI durante o treinamento de GED..."></textarea></div>
@@ -523,8 +532,8 @@ table.tf select, table.tf input[type=text], table.tf input[type=date] { font-siz
     <div class="sb">
       <div class="stitle">TAG Alarme</div>
       <div class="tab-blk">
-        <button type="button" class="tbtn g" id="tag-ok" onclick="selectTag('ok')">✓ &nbsp;Sem alarme — cliente saudável, sem risco imediato identificado</button>
-        <button type="button" class="tbtn r" id="tag-al" onclick="selectTag('al')">⚠ &nbsp;Alarme ativo — comunicar à gestão antes de encerrar formalmente</button>
+        <button type="button" class="tbtn g" id="tag-ok" onclick="selectTag('ok')"><svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Sem alarme — cliente saudável, sem risco imediato identificado</button>
+        <button type="button" class="tbtn r" id="tag-al" onclick="selectTag('al')"><svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z"/><path d="M12 9v4M12 17h.01"/></svg>Alarme ativo — comunicar à gestão antes de encerrar formalmente</button>
       </div>
       <div class="alarm-route" id="alarm-route">
         <div class="fl"><label>Encaminhar alarme para</label></div>
@@ -547,7 +556,7 @@ table.tf select, table.tf input[type=text], table.tf input[type=date] { font-siz
     <button type="button" onclick="finalizar()">Finalizar handoff →</button>
   </div>
 
-  <div class="confirm-msg" id="confirm-msg">✓ &nbsp;Handoff registrado com sucesso. O formulário pode ser salvo ou impresso.</div>
+  <div class="confirm-msg" id="confirm-msg"><svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Handoff registrado com sucesso. O formulário pode ser salvo ou impresso.</div>
 
   <div class="footer">
     <span><strong>Preâmbulo Tech</strong> · CPJ-3C · Diretoria de Operações <span class="footer-badge">BKC</span></span>
@@ -575,17 +584,21 @@ cfgItens.forEach((item, i) => {
   const tr = document.createElement('tr');
   if (i % 2) tr.className = 'ev';
 
+  const fornecedores = ['Leijud', 'Solucionare', 'DW', 'Webjur'];
   const pubHtml = item.pub ? `
-    <div id="pub${i}" style="margin-top:5px;">
-      <select id="pub-sel${i}" onchange="togglePubOutro(${i})" style="font-size:12px;padding:4px 7px;border:1px solid var(--border);border-radius:5px;width:100%;margin-bottom:3px;background:#fff;color:var(--text);font-family:inherit;">
-        <option value="">— fornecedor —</option>
-        <option>Leijud</option>
-        <option>Solucionare</option>
-        <option>DW</option>
-        <option>Webjur</option>
-        <option>Outro</option>
-      </select>
-      <input type="text" id="pub-outro${i}" placeholder="Qual fornecedor?" style="display:none;font-size:12px;padding:4px 7px;border:1px solid var(--border);border-radius:5px;width:100%;font-family:inherit;">
+    <div id="pub${i}" style="margin-top:5px;display:flex;flex-direction:column;gap:4px;">
+      ${fornecedores.map(f => `
+      <div>
+        <label class="ci"><input type="checkbox" class="pub-chk" onchange="togglePubFonte(this)"> ${f}</label>
+        <select class="pub-fonte-sel" style="display:none;font-size:11px;padding:3px 6px;border:1px solid var(--border);border-radius:5px;margin:3px 0 0 22px;width:auto;">
+          <option>Primeira fonte</option>
+          <option>Segunda fonte</option>
+        </select>
+      </div>`).join('')}
+      <div>
+        <label class="ci"><input type="checkbox" onchange="togglePubOutroChk(this,${i})"> Outro</label>
+        <input type="text" id="pub-outro${i}" placeholder="Qual fornecedor?" style="display:none;margin-top:3px;margin-left:22px;width:calc(100% - 22px);font-size:12px;padding:4px 7px;border:1px solid var(--border);border-radius:5px;">
+      </div>
     </div>` : '';
 
   tr.innerHTML = `
@@ -608,25 +621,39 @@ cfgItens.forEach((item, i) => {
 
 function toggleCfg(sid, pid, pubIdx) {
   const sel = document.getElementById(sid);
-  document.getElementById(pid).style.display = sel.value === 'Pendente' ? 'block' : 'none';
+  const box = document.getElementById(pid);
+  const ta = box.querySelector('textarea');
+  if (sel.value === 'Pendente') {
+    box.style.display = 'block';
+    ta.placeholder = 'Descreva a pendência...';
+  } else if (sel.value === 'Personalizado para o escritório') {
+    box.style.display = 'block';
+    ta.placeholder = 'Descreva a personalização feita...';
+  } else {
+    box.style.display = 'none';
+  }
   if (pubIdx >= 0) {
     document.getElementById('pub' + pubIdx).style.display =
       sel.value === 'Não se aplica' ? 'none' : 'block';
   }
 }
 
-function togglePubOutro(i) {
-  const sel = document.getElementById('pub-sel' + i);
-  document.getElementById('pub-outro' + i).style.display =
-    sel.value === 'Outro' ? 'block' : 'none';
+function togglePubFonte(chk) {
+  const sel = chk.closest('label').nextElementSibling;
+  if (sel) sel.style.display = chk.checked ? 'inline-block' : 'none';
+}
+
+function togglePubOutroChk(chk, i) {
+  document.getElementById('pub-outro' + i).style.display = chk.checked ? 'block' : 'none';
 }
 
 // Itens do sistema
+const ICN_WARN = '<svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-left:2px;"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z"/><path d="M12 9v4M12 17h.01"/></svg>';
 const modulos = [
   { nm: 'Processos' },
   { nm: 'Pessoas' },
   { nm: 'Tramitação' },
-  { nm: 'Contagem de prazos ⚠' },
+  { nm: 'Contagem de prazos ' + ICN_WARN },
   { nm: 'Timesheet' },
   { nm: 'Contratos e modelos de honorários' },
   { nm: 'Tarefas e agenda' },
@@ -686,6 +713,12 @@ function toggleSub(chkId, subId) {
   document.getElementById(subId).style.display =
     document.getElementById(chkId).checked ? 'block' : 'none';
 }
+
+// Backup só faz sentido em ambiente on-premise
+document.querySelectorAll('input[name="amb"]').forEach(r => r.addEventListener('change', () => {
+  document.getElementById('backup-wrap').style.display =
+    document.getElementById('amb-onprem').checked ? 'block' : 'none';
+}));
 
 // Sub-campo condicional por valor de select (ex: certificado NFS-e)
 function toggleSub2(selId, subId, matchValue) {
