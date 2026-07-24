@@ -107,13 +107,13 @@ table.tf select, table.tf input[type=text], table.tf input[type=date] { font-siz
 
 .submit-bar { background: var(--charcoal); padding: 18px 24px; display: flex; justify-content: space-between; align-items: center; border-radius: var(--radius); margin-top: 0; flex-wrap: wrap; gap: 10px; }
 .submit-bar span { color: rgba(255,255,255,.5); font-size: 11.5px; }
+.submit-bar strong { color: rgba(255,255,255,.85); font-weight: 700; }
 .submit-bar button { font-family: 'Montserrat', sans-serif; background: linear-gradient(135deg,#7EC0EA,var(--navy)); color: #12242f; border: none; border-radius: 24px; padding: .75rem 1.9rem; font-size: 13px; font-weight: 800; cursor: pointer; letter-spacing: .02em; box-shadow: 0 4px 14px rgba(93,156,212,.35); transition: opacity .15s; }
 .submit-bar button:hover { opacity: .88; }
+.submit-actions { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
 
 .confirm-msg { display: none; background: var(--green-bg); color: var(--green); border: 1px solid #b8d89c; border-radius: var(--radius); padding: .8rem 1.2rem; margin-top: 1rem; font-size: 13px; font-weight: 600; text-align: center; }
 
-.footer { background: var(--charcoal); color: rgba(255,255,255,0.55); border-radius: var(--radius); padding: 14px 24px; margin-top: 8px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; font-size: 11px; font-weight: 500; letter-spacing: .2px; }
-.footer strong { color: rgba(255,255,255,.85); font-weight: 700; }
 .footer-badge { width: 20px; height: 20px; border-radius: 50%; background: linear-gradient(135deg,var(--navy),#6B7DE0); display: inline-flex; align-items: center; justify-content: center; font-family: 'Montserrat', sans-serif; font-size: 8px; font-weight: 800; color: #fff; letter-spacing: .02em; vertical-align: middle; margin-left: 8px; }
 .icn { width: 14px; height: 14px; vertical-align: -2px; margin-right: 5px; flex-shrink: 0; }
 .field-hint { font-size: 11px; color: var(--gray); margin-top: 3px; font-style: italic; line-height: 1.4; }
@@ -128,7 +128,7 @@ table.tf select, table.tf input[type=text], table.tf input[type=date] { font-siz
   body { background: #fff; padding: 0; font-size: 12px; }
   #auth-gate { display: none !important; }
   .form-wrap { display: block !important; }
-  .submit-bar { display: none; }
+  .submit-bar button { display: none; }
   .confirm-msg { display: none; }
   .header .hero-rings, .header .hero-chev { display: none !important; }
 
@@ -552,16 +552,14 @@ table.tf select, table.tf input[type=text], table.tf input[type=date] { font-siz
   </div>
 
   <div class="submit-bar">
-    <span>Preâmbulo Tech &nbsp;·&nbsp; Diretoria de Operações &nbsp;·&nbsp; Encerramento CPJ-3C</span>
-    <button type="button" onclick="finalizar()">Finalizar handoff →</button>
+    <span><strong>Preâmbulo Tech</strong> &nbsp;·&nbsp; CPJ-3C &nbsp;·&nbsp; Diretoria de Operações <span class="footer-badge">BKC</span></span>
+    <span class="submit-actions">
+      <span>Atualizado em <span id="foot-date"></span></span>
+      <button type="button" onclick="finalizar()">Finalizar handoff →</button>
+    </span>
   </div>
 
   <div class="confirm-msg" id="confirm-msg"><svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Handoff registrado com sucesso. O formulário pode ser salvo ou impresso.</div>
-
-  <div class="footer">
-    <span><strong>Preâmbulo Tech</strong> · CPJ-3C · Diretoria de Operações <span class="footer-badge">BKC</span></span>
-    <span>Atualizado em <span id="foot-date"></span></span>
-  </div>
 </div>
 
 <script>
