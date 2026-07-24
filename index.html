@@ -164,6 +164,16 @@ table.tf select, table.tf input[type=text], table.tf input[type=date] { font-siz
 </style>
 </head>
 <body>
+<!-- Réplica estática só para o Netlify Forms detectar os campos no build. Não é exibida; o envio real é feito via fetch em finalizar(). -->
+<form name="handoff-cpj3c" data-netlify="true" netlify-honeypot="bot-field" hidden>
+  <input type="text" name="implementador">
+  <input type="text" name="escritorio">
+  <input type="text" name="codigo_cliente">
+  <input type="date" name="data_handoff">
+  <input type="text" name="tag_alarme">
+  <input name="bot-field">
+</form>
+
 <div id="auth-gate">
   <h2 style="font-size:18px;font-weight:700;">Verificando acesso...</h2>
   <p>Este formulário é de uso interno da Preâmbulo Tech.</p>
@@ -188,16 +198,16 @@ table.tf select, table.tf input[type=text], table.tf input[type=date] { font-siz
     <div class="section-head"><div class="section-letter">A</div><h2>Identificação do projeto</h2></div>
     <div class="sb">
       <div class="fr2">
-        <div class="fl"><label>Implementador responsável</label><input type="text"></div>
+        <div class="fl"><label>Implementador responsável</label><input type="text" id="fld-implementador"></div>
         <div class="fl"><label>PMO responsável</label><input type="text"></div>
       </div>
       <div class="fr2">
-        <div class="fl"><label>Data do handoff</label><input type="date"><div class="field-hint">Data em que este formulário está sendo preenchido.</div></div>
+        <div class="fl"><label>Data do handoff</label><input type="date" id="fld-data"><div class="field-hint">Data em que este formulário está sendo preenchido.</div></div>
         <div class="fl"><label>Duração (dias corridos)</label><input type="number" placeholder="Ex: 28"><div class="field-hint">Início = data de disponibilização do projeto para o implementador no CRM · Fim = data da última reunião realizada com o cliente.</div></div>
       </div>
       <div class="fr2">
-        <div class="fl"><label>Nome do escritório / departamento jurídico</label><input type="text"></div>
-        <div class="fl"><label>Código do cliente</label><input type="text" placeholder="Ex: 00123"></div>
+        <div class="fl"><label>Nome do escritório / departamento jurídico</label><input type="text" id="fld-escritorio"></div>
+        <div class="fl"><label>Código do cliente</label><input type="text" placeholder="Ex: 00123" id="fld-codigo"></div>
       </div>
       <div class="fr2">
         <div class="fl"><label>Atendimentos realizados</label><input type="number" placeholder="Ex: 12"></div>
@@ -767,7 +777,30 @@ function finalizar() {
   const msg = document.getElementById('confirm-msg');
   msg.style.display = 'block';
   msg.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  registrarHandoff();
   setTimeout(() => window.print(), 300);
+}
+
+// Registro resumido no Netlify Forms — não trava a impressão se falhar (ex: rodando fora do Netlify)
+function registrarHandoff() {
+  const tagAlarme = document.getElementById('tag-al').classList.contains('selected') ? 'Alarme ativo'
+    : document.getElementById('tag-ok').classList.contains('selected') ? 'Sem alarme'
+    : 'Não selecionado';
+
+  const dados = {
+    'form-name': 'handoff-cpj3c',
+    implementador: document.getElementById('fld-implementador').value,
+    escritorio: document.getElementById('fld-escritorio').value,
+    codigo_cliente: document.getElementById('fld-codigo').value,
+    data_handoff: document.getElementById('fld-data').value,
+    tag_alarme: tagAlarme,
+  };
+
+  fetch('/', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: new URLSearchParams(dados).toString(),
+  }).catch(err => console.error('Não foi possível registrar o handoff no Netlify Forms:', err));
 }
 
 // Rodapé
