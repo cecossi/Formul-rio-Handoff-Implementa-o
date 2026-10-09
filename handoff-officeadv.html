@@ -8,7 +8,7 @@
 <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Titilium+Web:wght@400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Titillium+Web:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
 :root {
   --charcoal:#2D2D2D; --navy:#5D9CD4; --light-gray:#E2E8F0; --white:#fff;
@@ -24,11 +24,18 @@
   --radius:12px; --gap:16px;
 }
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: 'Titilium Web', Calibri, 'Segoe UI', sans-serif; font-size: 14px; background: var(--bg); color: var(--text); padding: 2rem 1rem 3rem; }
+body { font-family: 'Titillium Web', Calibri, 'Segoe UI', sans-serif; font-size: 14px; background: var(--bg); color: var(--text); padding: 2rem 1rem 3rem; }
 h1,h2 { font-family: 'Montserrat', sans-serif; }
 .form-wrap { display: none; }
-#auth-gate { text-align: center; padding: 3rem 1rem; font-family: 'Titilium Web', Calibri, sans-serif; color: var(--text); }
-#auth-gate p { margin-top: .5rem; font-size: 13px; color: var(--gray); }
+#auth-gate { position: fixed; inset: 0; z-index: 99999; background: #1c1e22; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 16px; overflow: hidden; }
+.auth-rings { position: absolute; inset: 0; width: 100%; height: 100%; opacity: .55; pointer-events: none; }
+.auth-chevrons { position: absolute; right: -6%; top: 8%; width: 60%; max-width: 420px; opacity: .9; pointer-events: none; }
+.auth-panel { position: relative; z-index: 2; display: flex; flex-direction: column; align-items: center; gap: 16px; }
+.auth-mark { width: 54px; height: 54px; }
+#auth-gate h2 { font-family: 'Montserrat', sans-serif; font-size: 20px; font-weight: 800; color: #fff; text-align: center; }
+#auth-gate p { font-size: 13px; color: rgba(255,255,255,.5); text-align: center; margin: 0; }
+.auth-btn { font-family: 'Montserrat', sans-serif; background: linear-gradient(135deg,#7EC0EA,var(--navy)); color: #12242f; border: none; border-radius: 24px; padding: .75rem 2rem; font-size: 13px; font-weight: 800; cursor: pointer; letter-spacing: .02em; box-shadow: 0 4px 14px rgba(93,156,212,.35); transition: opacity .15s; }
+.auth-btn:hover { opacity: .88; }
 .form-wrap { max-width: 880px; margin: 0 auto; }
 
 .header { position: relative; overflow: hidden; background: linear-gradient(135deg, var(--charcoal) 0%, var(--navy) 100%); color: #fff; border-radius: var(--radius); padding: 22px 28px; margin-bottom: var(--gap); box-shadow: 0 4px 20px rgba(93,156,212,0.22); }
@@ -173,8 +180,36 @@ table.tf select, table.tf input[type=text], table.tf input[type=date] { font-siz
 </form>
 
 <div id="auth-gate">
-  <h2 style="font-size:18px;font-weight:700;">Verificando acesso...</h2>
-  <p>Este formulário é de uso interno da Preâmbulo Tech.</p>
+  <svg class="auth-rings" viewBox="0 0 600 560" preserveAspectRatio="xMidYMin slice" aria-hidden="true">
+    <defs>
+      <radialGradient id="authRingFade" cx="70%" cy="-10%" r="90%">
+        <stop offset="0%" stop-color="#7EC0EA" stop-opacity="0.5"/>
+        <stop offset="100%" stop-color="#7EC0EA" stop-opacity="0"/>
+      </radialGradient>
+    </defs>
+    <g stroke="#6fa8c9" fill="none" stroke-width="1">
+      <circle cx="430" cy="-60" r="120" opacity="0.5"/><circle cx="430" cy="-60" r="160" opacity="0.45"/><circle cx="430" cy="-60" r="200" opacity="0.4"/><circle cx="430" cy="-60" r="240" opacity="0.35"/><circle cx="430" cy="-60" r="280" opacity="0.3"/><circle cx="430" cy="-60" r="320" opacity="0.25"/><circle cx="430" cy="-60" r="360" opacity="0.2"/><circle cx="430" cy="-60" r="400" opacity="0.15"/>
+    </g>
+    <rect x="0" y="0" width="600" height="560" fill="url(#authRingFade)"/>
+  </svg>
+  <svg class="auth-chevrons" viewBox="0 0 260 260" fill="none" aria-hidden="true">
+    <defs>
+      <linearGradient id="authChevGrad" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="#a9c8db"/>
+        <stop offset="100%" stop-color="#2f4550"/>
+      </linearGradient>
+    </defs>
+    <path d="M50 210 L130 130 L210 210" stroke="#3f5560" stroke-width="26" opacity="0.4" transform="translate(18,-10)"/>
+    <path d="M40 220 L130 130 L220 220" stroke="url(#authChevGrad)" stroke-width="30" stroke-linejoin="round" stroke-linecap="square"/>
+  </svg>
+  <div class="auth-panel">
+    <svg class="auth-mark" viewBox="0 0 100 100" aria-hidden="true">
+      <path d="M20 66 L50 36 L80 66" stroke="#7EC0EA" stroke-width="11" fill="none" stroke-linejoin="round" stroke-linecap="square"/>
+    </svg>
+    <h2>Handoff Implementação — Office ADV</h2>
+    <p>Acesso restrito · Preâmbulo Tech</p>
+    <button class="auth-btn" id="auth-btn-login">Entrar</button>
+  </div>
 </div>
 
 <div class="form-wrap">
@@ -682,14 +717,12 @@ function selectTag(which) {
 
 // Auth gate
 if (window.netlifyIdentity) {
+  document.getElementById('auth-btn-login').addEventListener('click', () => window.netlifyIdentity.open());
   window.netlifyIdentity.on('init', user => {
     if (user) {
       document.getElementById('auth-gate').style.display = 'none';
       document.querySelector('.form-wrap').style.display = 'block';
     } else {
-      document.getElementById('auth-gate').innerHTML =
-        '<h2 style="font-size:18px;font-weight:700;">Acesso restrito</h2><p>Este formulário é de uso interno da Preâmbulo Tech.<br>Faça login para continuar.</p>';
-      window.netlifyIdentity.open();
       window.netlifyIdentity.on('login', () => {
         document.getElementById('auth-gate').style.display = 'none';
         document.querySelector('.form-wrap').style.display = 'block';
