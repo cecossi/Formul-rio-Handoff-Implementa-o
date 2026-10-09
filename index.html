@@ -789,20 +789,14 @@ function selectTag(which) {
 }
 
 // Auth gate
+function mostrarFormulario() {
+  document.getElementById('auth-gate').style.display = 'none';
+  document.querySelector('.form-wrap').style.display = 'block';
+}
 if (window.netlifyIdentity) {
-  document.getElementById('auth-btn-login').addEventListener('click', () => window.netlifyIdentity.open());
-  window.netlifyIdentity.on('init', user => {
-    if (user) {
-      document.getElementById('auth-gate').style.display = 'none';
-      document.querySelector('.form-wrap').style.display = 'block';
-    } else {
-      window.netlifyIdentity.on('login', () => {
-        document.getElementById('auth-gate').style.display = 'none';
-        document.querySelector('.form-wrap').style.display = 'block';
-        window.netlifyIdentity.close();
-      });
-    }
-  });
+  window.netlifyIdentity.on('init', user => { if (user) mostrarFormulario(); });
+  window.netlifyIdentity.on('login', () => { mostrarFormulario(); window.netlifyIdentity.close(); });
+  window.netlifyIdentity.on('signup', () => { mostrarFormulario(); window.netlifyIdentity.close(); });
 }
 
 // Finalizar
