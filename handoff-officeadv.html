@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Handoff Implementação — Office ADV</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='44' fill='none' stroke='%235D9CD4' stroke-width='9'/><circle cx='50' cy='50' r='25' fill='none' stroke='%235D9CD4' stroke-width='9'/><circle cx='50' cy='50' r='9' fill='%235D9CD4'/></svg>">
+<script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Titilium+Web:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --charcoal:#2D2D2D; --navy:#5D9CD4; --light-gray:#E2E8F0; --white:#fff;
+  --bg:#E2E8F0; --card:#fff;
+  --green:#3B6D11; --green-bg:#EAF3DE;
+  --blue-bg:#E7F1FA;
+  --amber:#854F0B; --amber-bg:#FAEEDA;
+  --red:#A32D2D; --red-bg:#FCEBEB;
+  --gray:#718096; --gray-bg:#EEF1F4;
+  --text:#2D2D2D; --text2:#4A5568; --border:#d8dde6;
+  --shadow:0 1px 4px rgba(52,55,72,0.10), 0 0 0 0.5px rgba(52,55,72,0.07);
+  --shadow-sm:0 1px 3px rgba(52,55,72,0.08);
+  --radius:12px; --gap:16px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Titilium Web', Calibri, 'Segoe UI', sans-serif; font-size: 14px; background: var(--bg); color: var(--text); padding: 2rem 1rem 3rem; }
+h1,h2 { font-family: 'Montserrat', sans-serif; }
+.form-wrap { display: none; }
+#auth-gate { text-align: center; padding: 3rem 1rem; font-family: 'Titilium Web', Calibri, sans-serif; color: var(--text); }
+#auth-gate p { margin-top: .5rem; font-size: 13px; color: var(--gray); }
+.form-wrap { max-width: 880px; margin: 0 auto; }
+
+.header { position: relative; overflow: hidden; background: linear-gradient(135deg, var(--charcoal) 0%, var(--navy) 100%); color: #fff; border-radius: var(--radius); padding: 22px 28px; margin-bottom: var(--gap); box-shadow: 0 4px 20px rgba(93,156,212,0.22); }
+.header .hero-rings { position: absolute; inset: 0; width: 100%; height: 100%; opacity: .25; pointer-events: none; }
+.header .hero-chev { position: absolute; right: -3%; top: -22%; width: 22%; max-width: 120px; opacity: .45; pointer-events: none; }
+.header-row { position: relative; z-index: 2; display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; flex-wrap: wrap; }
+.header h1 { font-size: 16px; font-weight: 800; letter-spacing: -.2px; }
+.header p { font-size: 11.5px; color: rgba(255,255,255,.62); margin-top: 5px; }
+.badge-pill { font-family: 'Montserrat', sans-serif; background: rgba(255,255,255,.18); color: #fff; font-size: 10px; letter-spacing: .1em; text-transform: uppercase; padding: 5px 13px; border-radius: 20px; white-space: nowrap; font-weight: 700; }
+
+.section-card { background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); margin-bottom: var(--gap); overflow: hidden; }
+.section-head { display: flex; align-items: center; gap: 12px; padding: 15px 22px; border-bottom: 1px solid var(--border); }
+.section-letter { width: 28px; height: 28px; border-radius: 8px; background: var(--navy); color: #fff; font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 2px 6px rgba(93,156,212,.35); }
+.section-head h2 { font-size: 13px; font-weight: 700; color: var(--text); letter-spacing: .04em; text-transform: uppercase; }
+
+.hint { background: var(--blue-bg); border-left: 3px solid var(--navy); padding: .6rem 1.1rem; font-size: 12px; color: var(--text2); font-style: italic; margin: 18px 22px 0; border-radius: 0 6px 6px 0; }
+
+.sb { padding: 18px 22px 22px; }
+
+.fr2 { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem 1.5rem; margin-bottom: .8rem; }
+.fr1 { display: grid; grid-template-columns: 1fr; gap: .75rem; margin-bottom: .8rem; }
+
+.fl label { display: block; font-family: 'Montserrat', sans-serif; font-size: 11px; font-weight: 700; color: var(--text2); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 4px; }
+.fl input[type=text], .fl input[type=date], .fl input[type=number], .fl select, .fl textarea {
+  width: 100%; border: 1px solid var(--border); border-radius: 6px; padding: 7px 10px;
+  font-size: 13px; color: var(--text); background: #fff; outline: none; font-family: inherit;
+  transition: border-color .15s, box-shadow .15s;
+}
+.fl input:focus, .fl select:focus, .fl textarea:focus { border-color: var(--navy); box-shadow: 0 0 0 3px rgba(93,156,212,.14); }
+.fl textarea { min-height: 60px; resize: vertical; }
+
+.stitle { font-family: 'Montserrat', sans-serif; font-size: 11px; font-weight: 700; color: var(--text); text-transform: uppercase; letter-spacing: .07em; margin: 1.1rem 0 .5rem; padding-bottom: 4px; border-bottom: 1px solid var(--border); }
+
+.cg { display: flex; flex-direction: column; gap: 6px; margin-top: 4px; }
+.ci { display: flex; align-items: center; gap: 8px; font-size: 13px; cursor: pointer; line-height: 1.4; }
+.ci input[type=radio], .ci input[type=checkbox] { width: 14px; height: 14px; accent-color: var(--navy); flex-shrink: 0; cursor: pointer; }
+
+.rg { display: flex; flex-direction: column; gap: 6px; margin-top: 4px; }
+.ri { display: flex; align-items: flex-start; gap: 8px; font-size: 13px; cursor: pointer; line-height: 1.5; }
+.ri input[type=radio] { width: 14px; height: 14px; margin-top: 3px; accent-color: var(--navy); flex-shrink: 0; cursor: pointer; }
+.ri.w { color: var(--amber); font-weight: 600; }
+
+table.tf { width: 100%; border-collapse: collapse; margin-top: .5rem; font-size: 12px; table-layout: fixed; }
+table.tf th { font-family: 'Montserrat', sans-serif; background: var(--gray-bg); color: var(--text2); font-weight: 700; text-align: left; padding: 7px 10px; border: 1px solid var(--border); font-size: 11px; text-transform: uppercase; letter-spacing: .05em; }
+table.tf td { padding: 6px 8px; border: 1px solid var(--border); vertical-align: top; }
+table.tf tr.ev td { background: #f7f9fb; }
+table.tf select, table.tf input[type=text], table.tf input[type=date] { font-size: 12px; padding: 4px 7px; border: 1px solid var(--border); border-radius: 5px; width: 100%; background: #fff; color: var(--text); font-family: inherit; }
+
+.ab { border-radius: 6px; padding: .65rem 1rem; font-size: 12px; margin: .8rem 0 0; display: flex; align-items: flex-start; gap: 8px; }
+.ab.inf { background: var(--blue-bg); color: var(--text); border-left: 3px solid var(--navy); }
+.ab.wrn { background: var(--amber-bg); color: #5c3a00; border-left: 3px solid var(--amber); }
+
+.pend-box { display: none; padding: 4px 0 2px; }
+.pend-box textarea { font-size: 12px; padding: 5px 7px; border: 1px solid var(--border); border-radius: 5px; width: 100%; font-family: inherit; min-height: 38px; resize: vertical; }
+
+.wfc { display: flex; flex-direction: column; gap: 5px; }
+.wf-tags { display: flex; flex-wrap: wrap; gap: 5px; padding: 4px 0 2px; }
+.wf-tag { font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 20px; border: 1px solid var(--border); cursor: pointer; background: var(--gray-bg); color: var(--gray); transition: all .12s; user-select: none; }
+.wf-tag.on { background: var(--navy); color: #fff; border-color: var(--navy); box-shadow: 0 2px 6px rgba(93,156,212,.3); }
+.wf-tag:hover:not(.on) { border-color: var(--navy); color: var(--navy); }
+
+.sub-date { display: none; margin-top: 6px; }
+.sub-date input[type=date] { font-size: 12px; padding: 5px 8px; border: 1px solid var(--border); border-radius: 5px; }
+
+.tab-blk { display: flex; gap: 1rem; margin-top: .5rem; }
+.tbtn { flex: 1; padding: .9rem 1rem; border-radius: 14px; border: 2px solid transparent; cursor: pointer; font-size: 13px; font-weight: 700; text-align: center; transition: all .15s; font-family: 'Montserrat', sans-serif; }
+.tbtn.g { background: var(--green-bg); color: var(--green); }
+.tbtn.r { background: var(--red-bg); color: var(--red); }
+.tbtn.g.selected { background: var(--green); color: #fff; box-shadow: 0 4px 14px rgba(59,109,17,.3); transform: translateY(-1px); }
+.tbtn.r.selected { background: var(--red); color: #fff; box-shadow: 0 4px 14px rgba(163,45,45,.3); transform: translateY(-1px); }
+
+.alarm-route { display: none; margin-top: 1rem; }
+.alarm-route .cg { flex-direction: row; flex-wrap: wrap; gap: .5rem 1.5rem; }
+
+.submit-bar { background: var(--charcoal); padding: 18px 24px; display: flex; justify-content: space-between; align-items: center; border-radius: var(--radius); margin-top: 0; flex-wrap: wrap; gap: 10px; }
+.submit-bar span { color: rgba(255,255,255,.5); font-size: 11.5px; }
+.submit-bar strong { color: rgba(255,255,255,.85); font-weight: 700; }
+.submit-bar button { font-family: 'Montserrat', sans-serif; background: linear-gradient(135deg,#7EC0EA,var(--navy)); color: #12242f; border: none; border-radius: 24px; padding: .75rem 1.9rem; font-size: 13px; font-weight: 800; cursor: pointer; letter-spacing: .02em; box-shadow: 0 4px 14px rgba(93,156,212,.35); transition: opacity .15s; }
+.submit-bar button:hover { opacity: .88; }
+.submit-actions { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+
+.confirm-msg { display: none; background: var(--green-bg); color: var(--green); border: 1px solid #b8d89c; border-radius: var(--radius); padding: .8rem 1.2rem; margin-top: 1rem; font-size: 13px; font-weight: 600; text-align: center; }
+
+.footer-badge { min-width: 26px; height: 18px; padding: 0 6px; border-radius: 9px; background: linear-gradient(135deg,var(--navy),#6B7DE0); display: inline-flex; align-items: center; justify-content: center; font-family: 'Montserrat', sans-serif; font-size: 9px; font-weight: 800; color: #fff; letter-spacing: .03em; vertical-align: middle; margin-left: 8px; line-height: 1; }
+.icn { width: 14px; height: 14px; vertical-align: -2px; margin-right: 5px; flex-shrink: 0; }
+.field-hint { font-size: 11px; color: var(--gray); margin-top: 3px; font-style: italic; line-height: 1.4; }
+.sub-input { margin-top: 5px; padding-left: 22px; display: none; }
+.sub-input input[type=text] { font-size: 12px; padding: 4px 7px; border: 1px solid var(--border); border-radius: 5px; width: 100%; font-family: inherit; }
+
+@media (max-width: 600px) {
+  .fr2 { grid-template-columns: 1fr; }
+  .tab-blk { flex-direction: column; }
+}
+@media print {
+  body { background: #fff; padding: 0; font-size: 12px; }
+  #auth-gate { display: none !important; }
+  .form-wrap { display: block !important; }
+  .submit-bar button { display: none; }
+  .confirm-msg { display: none; }
+  .header .hero-rings, .header .hero-chev { display: none !important; }
+
+  input[type=text], input[type=date], input[type=number], textarea, select {
+    border: none !important;
+    border-bottom: 1px solid #bbb !important;
+    background: transparent !important;
+    padding: 2px 0 !important;
+    box-shadow: none !important;
+    -webkit-appearance: none;
+  }
+  textarea { min-height: 0 !important; resize: none; }
+
+  .ci:has(input:checked), .ri:has(input:checked) { font-weight: 700; }
+  .ci input[type=checkbox]:not(:checked), .ri input[type=radio]:not(:checked) { opacity: 0; }
+  .ci:not(:has(input:checked)), .ri:not(:has(input:checked)) { color: #aaa; }
+
+  .tbtn:not(.selected) { display: none; }
+  .tbtn.selected { border: 2px solid var(--charcoal) !important; font-size: 12px; padding: .4rem .8rem; background: #fff !important; color: var(--charcoal) !important; }
+  .tab-blk { margin-top: .3rem; }
+
+  .wf-tag:not(.on) { display: none; }
+  .wf-tag.on { font-size: 11px; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+
+  .pend-box { display: none; }
+  .pend-box textarea { display: none; }
+
+  .section-card { page-break-inside: avoid; margin-bottom: .5rem; box-shadow: none; border: 1px solid #ddd; }
+  .section-letter { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .ab { display: none; }
+  .hint { display: none; }
+}
+</style>
+</head>
+<body>
+<!-- Réplica estática só para o Netlify Forms detectar os campos no build. Não é exibida; o envio real é feito via fetch em finalizar(). -->
+<form name="handoff-officeadv" data-netlify="true" netlify-honeypot="bot-field" hidden>
+  <input type="text" name="implementador">
+  <input type="text" name="escritorio">
+  <input type="text" name="codigo_cliente">
+  <input type="date" name="data_handoff">
+  <input type="text" name="tag_alarme">
+  <input name="bot-field">
+</form>
+
+<div id="auth-gate">
+  <h2 style="font-size:18px;font-weight:700;">Verificando acesso...</h2>
+  <p>Este formulário é de uso interno da Preâmbulo Tech.</p>
+</div>
+
+<div class="form-wrap">
+
+  <div class="header">
+    <svg class="hero-rings" viewBox="0 0 600 560" preserveAspectRatio="xMidYMin slice" aria-hidden="true"><g stroke="#6fa8c9" fill="none" stroke-width="1"><circle cx="430" cy="-60" r="120" opacity="0.5"/><circle cx="430" cy="-60" r="160" opacity="0.45"/><circle cx="430" cy="-60" r="200" opacity="0.4"/><circle cx="430" cy="-60" r="240" opacity="0.35"/><circle cx="430" cy="-60" r="280" opacity="0.3"/><circle cx="430" cy="-60" r="320" opacity="0.25"/></g></svg>
+    <svg class="hero-chev" viewBox="0 0 260 260" fill="none" aria-hidden="true"><path d="M40 220 L130 130 L220 220" stroke="#7ec0db" stroke-width="30" stroke-linejoin="round" stroke-linecap="square"/></svg>
+    <div class="header-row">
+      <div>
+        <h1>Preâmbulo Tech — Handoff Implementação → CS · Suporte · Comercial</h1>
+        <p>Encerramento de projeto Office ADV &nbsp;·&nbsp; Uso interno &nbsp;·&nbsp; Proibido enviar para clientes</p>
+      </div>
+      <div class="badge-pill">Uso interno</div>
+    </div>
+  </div>
+
+  <!-- A -->
+  <div class="section-card">
+    <div class="section-head"><div class="section-letter">A</div><h2>Identificação do projeto</h2></div>
+    <div class="sb">
+      <div class="fr2">
+        <div class="fl"><label>Implementador responsável</label><input type="text" id="fld-implementador"></div>
+        <div class="fl"><label>PMO responsável</label><input type="text"></div>
+      </div>
+      <div class="fr2">
+        <div class="fl"><label>Data do handoff</label><input type="date" id="fld-data"><div class="field-hint">Data em que este formulário está sendo preenchido.</div></div>
+        <div class="fl"><label>Duração (dias corridos)</label><input type="number" placeholder="Ex: 28"><div class="field-hint">Início = data de disponibilização do projeto para o implementador no CRM · Fim = data da última reunião realizada com o cliente.</div></div>
+      </div>
+      <div class="fr2">
+        <div class="fl"><label>Nome do escritório / departamento jurídico</label><input type="text" id="fld-escritorio"></div>
+        <div class="fl"><label>Código do cliente</label><input type="text" placeholder="Ex: 00123" id="fld-codigo"></div>
+      </div>
+      <div class="fr2">
+        <div class="fl"><label>Atendimentos realizados</label><input type="number" placeholder="Ex: 12"></div>
+        <div class="fl"><label>Versão do sistema</label><input type="text" placeholder="Ex: 3.2.1"></div>
+      </div>
+
+      <div class="stitle">Usuários</div>
+      <div class="fr2">
+        <div class="fl"><label>Usuários contratados</label><input type="number" placeholder="Ex: 10"></div>
+        <div class="fl"><label>Usuários cadastrados no sistema</label><input type="number" placeholder="Ex: 8"><div class="field-hint">Descasamento entre contratado e cadastrado é sinal para o comercial (downsell) ou para o CS (usuários sem acesso ainda).</div></div>
+      </div>
+
+      <div class="stitle">Plano contratado</div>
+      <div class="fr2">
+        <div class="fl"><label>Plano</label><input type="text" placeholder="Ex: Professional, Enterprise…"></div>
+        <div class="fl"><label>Módulos contratados à parte</label>
+          <div class="cg" style="flex-direction:row;flex-wrap:wrap;gap:.4rem 1.2rem;margin-top:6px;">
+            <label class="ci"><input type="checkbox"> Publicações</label>
+            <label class="ci"><input type="checkbox"> Andamentos processuais</label>
+            <label class="ci"><input type="checkbox"> Distribuições</label>
+            <label class="ci"><input type="checkbox"> Intimações</label>
+            <label class="ci"><input type="checkbox"> Pré-cadastro por CNJ</label>
+            <label class="ci"><input type="checkbox"> Módulo Financeiro</label>
+          </div>
+        </div>
+      </div>
+
+      <div class="stitle">Input de dados utilizado</div>
+      <div class="cg">
+        <label class="ci">
+          <input type="checkbox" id="mig-chk">
+          Migração de sistema anterior —&nbsp;
+          <select id="mig-sel" style="display:none;font-size:12px;padding:4px 7px;border:1px solid var(--border);border-radius:5px;background:#fff;color:var(--text);">
+            <option value="">— selecionar —</option>
+            <option>Astrea</option>
+            <option>Themis</option>
+            <option>Advwin</option>
+            <option>AdvNet</option>
+            <option>Projuris</option>
+            <option>SAJ</option>
+            <option>Jurídico Certo</option>
+            <option>Legal One</option>
+            <option>DataJuris</option>
+            <option>CPJ-3C</option>
+            <option>Planilha própria</option>
+            <option>Outro</option>
+          </select>
+          <input type="text" id="mig-outro" placeholder="Qual sistema?" style="display:none;margin-left:6px;width:130px;font-size:12px;padding:4px 7px;border:1px solid var(--border);border-radius:5px;">
+        </label>
+        <div>
+          <label class="ci"><input type="checkbox" id="oab-chk" onchange="toggleSub('oab-chk','oab-sub')"> Discovery via OAB</label>
+          <div class="sub-input" id="oab-sub"><input type="text" placeholder="OABs consultadas (ex: SP, RJ, MG)"></div>
+        </div>
+        <div>
+          <label class="ci"><input type="checkbox" id="cpf-chk" onchange="toggleSub('cpf-chk','cpf-sub')"> Discovery via CNJ / CPF / CNPJ</label>
+          <div class="sub-input" id="cpf-sub"><input type="text" placeholder="CPFs / CNPJs consultados"></div>
+        </div>
+        <label class="ci"><input type="checkbox"> Planilha padrão Preâmbulo</label>
+        <label class="ci"><input type="checkbox"> Planilha personalizada</label>
+        <label class="ci"><input type="checkbox"> Base zerada — cliente cadastrou manualmente</label>
+        <div>
+          <label class="ci"><input type="checkbox" id="copia-chk" onchange="toggleSub('copia-chk','copia-sub')"> Cópia de base</label>
+          <div class="sub-input" id="copia-sub"><input type="text" placeholder="Nome do escritório de origem"></div>
+        </div>
+      </div>
+
+      <div class="stitle">Volume migrado / carregado</div>
+      <div class="fr2">
+        <div class="fl"><label>Processos</label><input type="number" placeholder="Ex: 1240"></div>
+        <div class="fl"><label>Pessoas / clientes</label><input type="number" placeholder="Ex: 890"></div>
+      </div>
+      <div class="field-hint" style="margin-top:-.5rem;margin-bottom:.5rem">Preencher sempre que houve migração, discovery ou cópia de base — a validação de integridade desse volume é conferida no Bloco F.</div>
+    </div>
+  </div>
+
+  <!-- B -->
+  <div class="section-card">
+    <div class="section-head"><div class="section-letter">B</div><h2>Ambiente e configuração base</h2></div>
+    <div class="hint">Preencha com o que você verificou diretamente no sistema — não com o que o cliente disse.</div>
+    <div class="sb">
+
+      <div class="stitle">Perfil administrador</div>
+      <div class="field-hint" style="margin-bottom:.5rem">Quase toda configuração do Office ADV fica atrás do ícone de engrenagem e exige confirmação de senha — mapear o admin é sempre o primeiro passo.</div>
+      <div class="fr2">
+        <div class="fl"><label>Administrador identificado e treinado</label><input type="text" placeholder="Nome do usuário no sistema"></div>
+        <div class="fl"><label>Confirmação de senha de admin testada</label>
+          <select>
+            <option>Sim — acesso confirmado</option>
+            <option>Não — pendente</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="stitle">Suporte técnico do cliente</div>
+      <div class="fr1">
+        <div class="fl"><label>Técnico responsável do cliente e contato</label><input type="text" placeholder="Nome · telefone ou e-mail"></div>
+      </div>
+
+      <div class="stitle">Módulo Financeiro</div>
+      <div class="rg">
+        <label class="ri"><input type="radio" name="fin"> Contratado e habilitado em Administração → Usuários → Permissões</label>
+        <label class="ri w"><input type="radio" name="fin"> Contratado mas não habilitado nas permissões &nbsp;← registrar no Bloco E</label>
+        <label class="ri"><input type="radio" name="fin"> Não contratado — não se aplica</label>
+      </div>
+
+      <div class="stitle">Módulos contratados à parte — verificação de acesso</div>
+      <div class="field-hint" style="margin-bottom:.5rem">Se o módulo não foi contratado, a tela correspondente aparece vazia — fonte frequente de dúvida do cliente pós-handoff.</div>
+      <table class="tf">
+        <thead><tr><th>Módulo</th><th style="width:210px">Situação</th></tr></thead>
+        <tbody>
+          <tr><td>Publicações</td><td><select><option>Contratado e funcionando</option><option>Contratado — com problema (registrar no Bloco E)</option><option>Não contratado</option></select></td></tr>
+          <tr class="ev"><td>Andamentos processuais</td><td><select><option>Contratado e funcionando</option><option>Contratado — com problema (registrar no Bloco E)</option><option>Não contratado</option></select></td></tr>
+          <tr><td>Distribuições</td><td><select><option>Contratado e funcionando</option><option>Contratado — com problema (registrar no Bloco E)</option><option>Não contratado</option></select></td></tr>
+          <tr class="ev"><td>Intimações</td><td><select><option>Contratado e funcionando</option><option>Contratado — com problema (registrar no Bloco E)</option><option>Não contratado</option></select></td></tr>
+          <tr><td>Pré-cadastro por CNJ</td><td><select><option>Contratado e funcionando</option><option>Contratado — com problema (registrar no Bloco E)</option><option>Não contratado</option></select></td></tr>
+        </tbody>
+      </table>
+
+      <div class="stitle">Status das configurações base</div>
+      <table class="tf">
+        <thead><tr><th>Configuração</th><th style="width:230px">Status</th><th style="width:95px">Validado?</th></tr></thead>
+        <tbody id="cfg-tbody"></tbody>
+      </table>
+      <div class="ab inf"><svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>"Padrão do sistema" indica que o cliente vai operar com valores genéricos que podem não refletir o fluxo real do escritório — sinalizar como ponto de atenção para o CS.</div>
+
+      <div class="stitle">Usuários e perfis de acesso</div>
+      <table class="tf">
+        <thead><tr><th>Item</th><th style="width:270px">Situação</th></tr></thead>
+        <tbody>
+          <tr><td>Perfis de acesso configurados e testados</td><td><select><option>Sim — personalizados para o escritório</option><option>Sim — padrão genérico (não customizado)</option><option>Parcialmente</option><option>Não configurados</option></select></td></tr>
+          <tr class="ev"><td>Senhas padrão alteradas pelos usuários</td><td><select><option>Sim</option><option>Não</option><option>Parcialmente</option></select></td></tr>
+          <tr><td>Ações em lote testadas por perfil administrador</td><td><select><option>Sim — testadas e funcionando</option><option>Não testadas</option><option>Não se aplica</option></select></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- C -->
+  <div class="section-card">
+    <div class="section-head"><div class="section-letter">C</div><h2>Status de adoção por módulo</h2></div>
+    <div class="hint">Avaliação do implementador. "Em uso" = módulo funciona na tela E o cliente opera sem depender de orientação.</div>
+    <div class="sb">
+      <table class="tf">
+        <thead><tr><th>Módulo</th><th style="width:175px">Status</th><th>Observações</th></tr></thead>
+        <tbody id="mod-tbody"></tbody>
+      </table>
+      <div class="ab wrn"><svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z"/><path d="M12 9v4M12 17h.01"/></svg>"Sem adoção" exige cadência ativa do CS, não suporte reativo. Módulos contratados e nunca acessados são prioritários.</div>
+    </div>
+  </div>
+
+  <!-- D -->
+  <div class="section-card">
+    <div class="section-head"><div class="section-letter">D</div><h2>Verificações técnicas na interface</h2></div>
+    <div class="sb">
+      <table class="tf">
+        <thead><tr><th>Verificação</th><th style="width:210px">Resultado</th></tr></thead>
+        <tbody>
+          <tr><td>Cadastro de processo funcionando</td><td><select><option>Funcionando</option><option>Com erro</option><option>Não testado</option></select></td></tr>
+          <tr class="ev"><td>Andamento registrado em processo teste</td><td><select><option>Funcionando</option><option>Com erro</option><option>Não se aplica — módulo não contratado</option></select></td></tr>
+          <tr><td>Publicação recebida e vinculada a processo</td><td><select><option>Funcionando</option><option>Com erro</option><option>Não se aplica — módulo não contratado</option></select></td></tr>
+          <tr class="ev"><td>Evento de agenda criado e exibido corretamente</td><td><select><option>Funcionando</option><option>Com erro</option><option>Não testado</option></select></td></tr>
+          <tr><td>Serviço extrajudicial cadastrado</td><td><select><option>Funcionando</option><option>Com erro</option><option>Não se aplica</option></select></td></tr>
+          <tr class="ev"><td>Relatório básico gerado</td><td><select><option>Funcionando</option><option>Com erro</option><option>Não testado</option></select></td></tr>
+          <tr><td>Banco de Peças — ao menos uma peça acessível</td><td><select><option>Funcionando</option><option>Com erro</option><option>Não se aplica</option></select></td></tr>
+          <tr class="ev"><td>Módulo Financeiro acessado pelo usuário final</td><td><select><option>Sim — acesso confirmado</option><option>Com erro</option><option>Não se aplica — não contratado</option></select></td></tr>
+          <tr><td>Ação em lote executada por perfil administrador</td><td><select><option>Sim — testada com sucesso</option><option>Com erro</option><option>Não testado</option></select></td></tr>
+          <tr class="ev"><td>Tempo de resposta em tela de listagem grande (ex: lista de processos)</td><td><select><option>Adequado</option><option>Perceptivelmente lento</option><option>Não avaliado</option></select></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- E -->
+  <div class="section-card">
+    <div class="section-head"><div class="section-letter">E</div><h2>Pendências em aberto</h2></div>
+    <div class="hint">Bloqueante = impede operar → não encerrar. &nbsp;Relevante = degrada experiência → encerrar com prazo. &nbsp;Do cliente = depende de ação do cliente → registrar com responsável claro.</div>
+    <div class="sb">
+      <table class="tf">
+        <thead><tr><th>Descrição da pendência</th><th style="width:125px">Tipo</th><th style="width:110px">Criticidade</th><th style="width:100px">Responsável</th><th style="width:90px">Prazo</th></tr></thead>
+        <tbody>
+          <tr><td><input type="text"></td><td><select><option>—</option><option>Técnica</option><option>Configuração</option><option>Treinamento</option><option>Do cliente</option><option>Fornecedor externo</option><option>Produto / desenvolvimento</option></select></td><td><select><option>—</option><option>Bloqueante</option><option>Relevante</option><option>Estética</option><option>Melhoria de produto</option></select></td><td><input type="text"></td><td><input type="date"></td></tr>
+          <tr class="ev"><td><input type="text"></td><td><select><option>—</option><option>Técnica</option><option>Configuração</option><option>Treinamento</option><option>Do cliente</option><option>Fornecedor externo</option><option>Produto / desenvolvimento</option></select></td><td><select><option>—</option><option>Bloqueante</option><option>Relevante</option><option>Estética</option><option>Melhoria de produto</option></select></td><td><input type="text"></td><td><input type="date"></td></tr>
+          <tr><td><input type="text"></td><td><select><option>—</option><option>Técnica</option><option>Configuração</option><option>Treinamento</option><option>Do cliente</option><option>Fornecedor externo</option><option>Produto / desenvolvimento</option></select></td><td><select><option>—</option><option>Bloqueante</option><option>Relevante</option><option>Estética</option><option>Melhoria de produto</option></select></td><td><input type="text"></td><td><input type="date"></td></tr>
+        </tbody>
+      </table>
+      <div class="stitle" style="margin-top:1rem">Há pendência bloqueante?</div>
+      <div class="rg">
+        <label class="ri"><input type="radio" name="bl"> Não — cliente pode ser encerrado formalmente</label>
+        <label class="ri w"><input type="radio" name="bl"> Sim — NÃO encerrar. Responsável e prazo registrados acima.</label>
+      </div>
+    </div>
+  </div>
+
+  <!-- F -->
+  <div class="section-card">
+    <div class="section-head"><div class="section-letter">F</div><h2>Eixo adoção</h2></div>
+    <div class="sb">
+      <div class="stitle">O cliente opera o Office ADV como sistema principal?</div>
+      <div class="rg">
+        <label class="ri"><input type="radio" name="pr"> Sim — Office ADV é o sistema principal e o anterior foi desativado</label>
+        <label class="ri"><input type="radio" name="pr"> Parcialmente — sistema anterior ainda ativo, com prazo definido:&nbsp;<input type="date" style="display:inline;width:150px;font-size:12px;padding:3px 7px;border:1px solid var(--border);border-radius:5px;"></label>
+        <label class="ri w"><input type="radio" name="pr"> Não — sistema anterior ainda ativo sem prazo concreto &nbsp;← risco de churn silencioso</label>
+      </div>
+
+      <div class="stitle">Validação de integridade pós-migração foi realizada?</div>
+      <div class="field-hint" style="margin-bottom:.5rem">Contagem de processos/pessoas batendo com o volume informado no Bloco A. Sem essa validação, divergências só aparecem quando o cliente já está com o CS.</div>
+      <div class="rg">
+        <label class="ri"><input type="radio" name="vm"> Sim — contagem conferida e batendo</label>
+        <label class="ri"><input type="radio" name="vm"> Parcial — conferência incompleta</label>
+        <label class="ri w"><input type="radio" name="vm"> Não realizada</label>
+        <label class="ri"><input type="radio" name="vm"> Não se aplica — não houve migração de dados</label>
+      </div>
+
+      <div class="stitle">Todos os usuários previstos foram treinados?</div>
+      <div class="rg">
+        <label class="ri"><input type="radio" name="tr"> Sim — todos os usuários contratados foram treinados</label>
+        <label class="ri"><input type="radio" name="tr"> Parcialmente — somente ponto focal ou alguns usuários</label>
+        <label class="ri w"><input type="radio" name="tr"> Não — treinamento pendente &nbsp;← registrar no Bloco E</label>
+      </div>
+
+      <div class="stitle">O ponto focal executa as funções críticas sem depender do implementador?</div>
+      <div class="hint" style="margin:0 0 .6rem">Funções críticas: cadastrar processo · registrar andamento · criar evento de agenda · emitir relatório básico · acessar módulo financeiro (se contratado)</div>
+      <div class="rg">
+        <label class="ri"><input type="radio" name="fo"> Sim — opera com autonomia</label>
+        <label class="ri"><input type="radio" name="fo"> Parcialmente — algumas funções ainda precisam de apoio</label>
+        <label class="ri w"><input type="radio" name="fo"> Não — dependência alta do suporte externo</label>
+      </div>
+
+      <div class="stitle">Usuários acessaram o sistema nos últimos 7 dias úteis?</div>
+      <div class="rg">
+        <label class="ri"><input type="radio" name="ac"> Sim — acessos regulares observados</label>
+        <label class="ri"><input type="radio" name="ac"> Parcialmente — apenas o ponto focal com acesso recente</label>
+        <label class="ri w"><input type="radio" name="ac"> Não — nenhum acesso recente verificado &nbsp;← sinal crítico de abandono</label>
+      </div>
+    </div>
+  </div>
+
+  <!-- G -->
+  <div class="section-card">
+    <div class="section-head"><div class="section-letter">G</div><h2>Eixo satisfação</h2></div>
+    <div class="sb">
+      <div class="stitle">Há sinais de insatisfação não verbalizada?</div>
+      <div class="hint" style="margin:0 0 .6rem">Sinais de alerta: "está tudo bem" + baixo engajamento + reuniões canceladas + respostas lentas + poucos usuários usando + sistema paralelo ainda ativo</div>
+      <div class="rg">
+        <label class="ri"><input type="radio" name="sa"> Não — cliente engajado e comunicativo durante todo o projeto</label>
+        <label class="ri w"><input type="radio" name="sa"> Sim, há sinais — descrever abaixo</label>
+        <label class="ri w"><input type="radio" name="sa"> Incerto — pouco contato para avaliar &nbsp;← acionar antes de encerrar</label>
+      </div>
+      <div class="fr1" style="margin-top:.6rem">
+        <div class="fl"><label>Se houver sinais, descreva o que foi observado</label><textarea placeholder="Descreva os comportamentos observados..."></textarea></div>
+      </div>
+
+      <div class="stitle">Módulos contratados mas nunca acessados durante o projeto</div>
+      <div class="field-hint" style="margin-bottom:.5rem">Módulo contratado com tela vazia é a reclamação pós-handoff mais comum no Office ADV — o cliente paga e não usa, e culpa a implementação.</div>
+      <div class="rg">
+        <label class="ri"><input type="radio" name="mod-nunca"> Não — todos os módulos contratados foram acessados e testados</label>
+        <label class="ri w"><input type="radio" name="mod-nunca"> Sim — há módulos contratados não acessados (detalhar abaixo)</label>
+      </div>
+      <div class="fl" style="margin-top:.5rem"><textarea placeholder="Quais módulos e por quê não foram acessados..."></textarea></div>
+
+      <div class="stitle">O cliente entende que o sistema inativa registros, não exclui?</div>
+      <div class="field-hint" style="margin-bottom:.5rem">Clientes vindos de outros ERPs esperem poder deletar — quando não conseguem, abrem chamado achando que é bug.</div>
+      <div class="rg">
+        <label class="ri"><input type="radio" name="inativa"> Sim — foi explicado e compreendido</label>
+        <label class="ri w"><input type="radio" name="inativa"> Não foi abordado &nbsp;← sinalizar para o CS</label>
+      </div>
+
+      <div class="stitle">Contexto do negócio do escritório</div>
+      <div class="fl"><label>Informações que o CS precisa saber (momento da empresa, dinâmica interna, histórico relevante)</label>
+        <textarea rows="3" placeholder="Ex: escritório em expansão, sócio não participou do projeto, vai contratar 3 advogados em 60 dias..."></textarea>
+      </div>
+
+      <div class="stitle">O decisor / sócio está ciente do estado atual do projeto?</div>
+      <div class="rg">
+        <label class="ri"><input type="radio" name="de"> Sim — decisor acompanhou e está alinhado</label>
+        <label class="ri"><input type="radio" name="de"> Parcialmente — contato principal foi um intermediário</label>
+        <label class="ri w"><input type="radio" name="de"> Não — decisor não envolvido &nbsp;← risco de perda de patrocínio interno</label>
+      </div>
+
+      <div class="stitle">Perfil comportamental do cliente</div>
+      <div class="cg">
+        <label class="ci"><input type="checkbox"> Autônomo e comunicativo</label>
+        <label class="ci"><input type="checkbox"> Dependente de suporte — busca orientação com muita frequência</label>
+        <label class="ci"><input type="checkbox"> Escalador reflexo — vai à diretoria ao primeiro sinal de problema</label>
+        <label class="ci"><input type="checkbox"> Insatisfeito silencioso — risco de sumir após o encerramento</label>
+        <label class="ci"><input type="checkbox"> Técnico exigente — questiona configurações e comportamentos do sistema</label>
+      </div>
+      <div class="fl" style="margin-top:.8rem"><label>Observações sobre o perfil</label><textarea placeholder="Contexto adicional útil para o CS..."></textarea></div>
+
+      <div class="stitle">Se você fosse o CS recebendo esse cliente agora, o que te preocuparia?</div>
+      <div class="fl"><textarea rows="3" placeholder="Campo livre — o dado mais valioso costuma aparecer aqui."></textarea></div>
+    </div>
+  </div>
+
+  <!-- H -->
+  <div class="section-card">
+    <div class="section-head"><div class="section-letter">H</div><h2>Oportunidades para o comercial</h2></div>
+    <div class="sb">
+      <div class="stitle">Módulos à parte com interesse demonstrado</div>
+      <div class="cg">
+        <label class="ci"><input type="checkbox"> Publicações (não contratado)</label>
+        <label class="ci"><input type="checkbox"> Andamentos processuais (não contratado)</label>
+        <label class="ci"><input type="checkbox"> Distribuições (não contratado)</label>
+        <label class="ci"><input type="checkbox"> Intimações (não contratado)</label>
+        <label class="ci"><input type="checkbox"> Pré-cadastro por CNJ (não contratado)</label>
+        <label class="ci"><input type="checkbox"> Módulo Financeiro (não contratado)</label>
+      </div>
+
+      <div class="stitle" style="margin-top:1rem">Outros produtos com interesse demonstrado</div>
+      <div class="cg">
+        <label class="ci"><input type="checkbox"> Preâmbulo Bank</label>
+        <label class="ci"><input type="checkbox"> CRIA.AI (geração de peças)</label>
+        <label class="ci"><input type="checkbox"> Consultoria</label>
+        <div>
+          <label class="ci"><input type="checkbox" id="outro-op-chk" onchange="toggleSub('outro-op-chk','outro-op-sub')"> Outro produto ou serviço</label>
+          <div class="sub-input" id="outro-op-sub"><input type="text" placeholder="Qual produto/serviço?"></div>
+        </div>
+        <label class="ci"><input type="checkbox"> Nenhum identificado neste momento</label>
+      </div>
+      <div class="fl" style="margin-top:.6rem"><label>Contexto de cada interesse identificado</label><textarea placeholder="Ex: cliente perguntou sobre publicações durante o treinamento de processos..."></textarea></div>
+
+      <div class="stitle">Potencial de upgrade de plano</div>
+      <div class="rg">
+        <label class="ri"><input type="radio" name="up"> Sim — contexto abaixo</label>
+        <label class="ri"><input type="radio" name="up"> Não — porte estável</label>
+        <label class="ri"><input type="radio" name="up"> Não avaliado</label>
+      </div>
+      <div class="fl" style="margin-top:.6rem"><label>Contexto da oportunidade</label><textarea></textarea></div>
+    </div>
+  </div>
+
+  <!-- I -->
+  <div class="section-card">
+    <div class="section-head"><div class="section-letter">I</div><h2>TAG Alarme e observações finais</h2></div>
+    <div class="sb">
+      <div class="stitle">TAG Alarme</div>
+      <div class="tab-blk">
+        <button type="button" class="tbtn g" id="tag-ok" onclick="selectTag('ok')"><svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Sem alarme — cliente saudável, sem risco imediato identificado</button>
+        <button type="button" class="tbtn r" id="tag-al" onclick="selectTag('al')"><svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z"/><path d="M12 9v4M12 17h.01"/></svg>Alarme ativo — comunicar à gestão antes de encerrar formalmente</button>
+      </div>
+      <div class="alarm-route" id="alarm-route">
+        <div class="fl"><label>Encaminhar alarme para</label></div>
+        <div class="cg">
+          <label class="ci"><input type="checkbox"> CS</label>
+          <label class="ci"><input type="checkbox"> Suporte</label>
+          <label class="ci"><input type="checkbox"> Comercial</label>
+          <label class="ci"><input type="checkbox"> Diretoria</label>
+        </div>
+      </div>
+      <div class="fl" style="margin-top:1.2rem">
+        <label>Observações finais para as áreas receptoras</label>
+        <textarea rows="4" placeholder="Contexto e alertas que não cabem nos campos acima..."></textarea>
+      </div>
+    </div>
+  </div>
+
+  <div class="submit-bar">
+    <span><strong>Preâmbulo Tech</strong> &nbsp;·&nbsp; Office ADV &nbsp;·&nbsp; Diretoria de Operações <span class="footer-badge">BKC</span></span>
+    <span class="submit-actions">
+      <span>Atualizado em <span id="foot-date"></span></span>
+      <button type="button" onclick="finalizar()">Finalizar handoff →</button>
+    </span>
+  </div>
+
+  <div class="confirm-msg" id="confirm-msg"><svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Handoff registrado com sucesso. O formulário pode ser salvo ou impresso.</div>
+</div>
+
+<script>
+// Configurações base — Office ADV
+const cfgItens = [
+  { nm: 'Configuração Geral do Sistema' },
+  { nm: 'Perfis de acesso e permissões' },
+  { nm: 'Menu Alerta' },
+  { nm: 'Banco de Peças' },
+  { nm: 'Cadastros (plano de contas, categorias)' },
+];
+const ctb = document.getElementById('cfg-tbody');
+cfgItens.forEach((item, i) => {
+  const sid = 'cfg' + i, pid = 'pnd' + i;
+  const tr = document.createElement('tr');
+  if (i % 2) tr.className = 'ev';
+  tr.innerHTML = `
+    <td>${item.nm}</td>
+    <td>
+      <select id="${sid}" onchange="toggleCfg('${sid}','${pid}')">
+        <option>Personalizado para o escritório</option>
+        <option>Padrão do sistema</option>
+        <option>Pendente</option>
+        <option>Não se aplica</option>
+      </select>
+      <div class="pend-box" id="${pid}">
+        <textarea placeholder="Descreva a pendência..."></textarea>
+      </div>
+    </td>
+    <td><select><option>Sim</option><option>Não</option><option>Não se aplica</option></select></td>`;
+  ctb.appendChild(tr);
+});
+
+function toggleCfg(sid, pid) {
+  const sel = document.getElementById(sid);
+  const box = document.getElementById(pid);
+  const ta = box.querySelector('textarea');
+  if (sel.value === 'Pendente') {
+    box.style.display = 'block';
+    ta.placeholder = 'Descreva a pendência...';
+  } else if (sel.value === 'Personalizado para o escritório') {
+    box.style.display = 'block';
+    ta.placeholder = 'Descreva a personalização feita...';
+  } else {
+    box.style.display = 'none';
+  }
+}
+
+// Módulos do sistema — Office ADV
+const ICN_WARN = '<svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-left:2px;"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z"/><path d="M12 9v4M12 17h.01"/></svg>';
+const modulos = [
+  { nm: 'Processos' },
+  { nm: 'Agenda e Compromissos' },
+  { nm: 'Publicações', obs: 'Módulo à parte — verificar se andamentos/distribuições/intimações inclusos' },
+  { nm: 'Serviços (extrajudicial)' },
+  { nm: 'Clientes' },
+  { nm: 'Controle' },
+  { nm: 'Relatórios' },
+  { nm: 'Banco de Peças' },
+  { nm: 'Menu Alerta' },
+  { nm: 'Módulo Financeiro — contas a pagar/receber' + ICN_WARN, obs: 'Verificar se habilitado nas permissões antes de marcar Em uso' },
+  { nm: 'Módulo Financeiro — contratos' },
+  { nm: 'Módulo Financeiro — faturamento' },
+  { nm: 'Módulo Financeiro — reembolsos e repasses' },
+];
+
+const mtb = document.getElementById('mod-tbody');
+modulos.forEach((m, i) => {
+  const tr = document.createElement('tr');
+  if (i % 2) tr.className = 'ev';
+
+  const stSel = `<select>
+    <option>Em uso</option>
+    <option>Sem adoção</option>
+    <option>Parcial</option>
+    <option>Não configurado</option>
+    <option>Não se aplica</option>
+  </select>`;
+
+  const obsHtml = `<input type="text"${m.obs ? ` placeholder="${m.obs}"` : ''}>`;
+  tr.innerHTML = `<td>${m.nm}</td><td>${stSel}</td><td>${obsHtml}</td>`;
+  mtb.appendChild(tr);
+});
+
+// Sub-campos condicionais
+function toggleSub(chkId, subId) {
+  document.getElementById(subId).style.display =
+    document.getElementById(chkId).checked ? 'block' : 'none';
+}
+
+// Migração
+const mc = document.getElementById('mig-chk');
+const ms = document.getElementById('mig-sel');
+const mo = document.getElementById('mig-outro');
+mc.addEventListener('change', () => {
+  ms.style.display = mc.checked ? 'inline-block' : 'none';
+  if (!mc.checked) { mo.style.display = 'none'; ms.value = ''; }
+});
+ms.addEventListener('change', () => {
+  mo.style.display = ms.value === 'Outro' ? 'inline-block' : 'none';
+});
+
+// TAG Alarme
+function selectTag(which) {
+  document.getElementById('tag-ok').classList.toggle('selected', which === 'ok');
+  document.getElementById('tag-al').classList.toggle('selected', which === 'al');
+  document.getElementById('alarm-route').style.display = which === 'al' ? 'block' : 'none';
+}
+
+// Auth gate
+if (window.netlifyIdentity) {
+  window.netlifyIdentity.on('init', user => {
+    if (user) {
+      document.getElementById('auth-gate').style.display = 'none';
+      document.querySelector('.form-wrap').style.display = 'block';
+    } else {
+      document.getElementById('auth-gate').innerHTML =
+        '<h2 style="font-size:18px;font-weight:700;">Acesso restrito</h2><p>Este formulário é de uso interno da Preâmbulo Tech.<br>Faça login para continuar.</p>';
+      window.netlifyIdentity.open();
+      window.netlifyIdentity.on('login', () => {
+        document.getElementById('auth-gate').style.display = 'none';
+        document.querySelector('.form-wrap').style.display = 'block';
+        window.netlifyIdentity.close();
+      });
+    }
+  });
+}
+
+// Finalizar
+function finalizar() {
+  const msg = document.getElementById('confirm-msg');
+  msg.style.display = 'block';
+  msg.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  registrarHandoff();
+  setTimeout(() => window.print(), 300);
+}
+
+// Registro resumido no Netlify Forms
+function registrarHandoff() {
+  const tagAlarme = document.getElementById('tag-al').classList.contains('selected') ? 'Alarme ativo'
+    : document.getElementById('tag-ok').classList.contains('selected') ? 'Sem alarme'
+    : 'Não selecionado';
+
+  const dados = {
+    'form-name': 'handoff-officeadv',
+    implementador: document.getElementById('fld-implementador').value,
+    escritorio: document.getElementById('fld-escritorio').value,
+    codigo_cliente: document.getElementById('fld-codigo').value,
+    data_handoff: document.getElementById('fld-data').value,
+    tag_alarme: tagAlarme,
+  };
+
+  fetch('/', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: new URLSearchParams(dados).toString(),
+  }).catch(err => console.error('Não foi possível registrar o handoff no Netlify Forms:', err));
+}
+
+// Rodapé
+document.getElementById('foot-date').textContent = new Date().toLocaleDateString('pt-BR');
+</script>
+</body>
+</html>
