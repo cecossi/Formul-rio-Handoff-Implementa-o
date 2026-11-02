@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Handoffs Realizados — Preâmbulo Tech</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='44' fill='none' stroke='%235D9CD4' stroke-width='9'/><circle cx='50' cy='50' r='25' fill='none' stroke='%235D9CD4' stroke-width='9'/><circle cx='50' cy='50' r='9' fill='%235D9CD4'/></svg>">
+<script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Titillium+Web:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --charcoal:#2D2D2D; --navy:#5D9CD4; --white:#fff;
+  --bg:#E2E8F0; --border:#d8dde6;
+  --shadow:0 1px 4px rgba(52,55,72,0.10), 0 0 0 0.5px rgba(52,55,72,0.07);
+  --radius:12px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Titillium Web', Calibri, 'Segoe UI', sans-serif; font-size: 14px; background: var(--bg); color: var(--charcoal); min-height: 100vh; padding: 2rem 1rem; }
+
+/* ── AUTH GATE ── */
+#auth-gate { position: fixed; inset: 0; z-index: 10; background: #1c1e22; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 16px; overflow: hidden; }
+.auth-rings { position: absolute; inset: 0; width: 100%; height: 100%; opacity: .55; pointer-events: none; }
+.auth-chevrons { position: absolute; right: -6%; top: 8%; width: 60%; max-width: 420px; opacity: .9; pointer-events: none; }
+.auth-panel { position: relative; z-index: 2; display: flex; flex-direction: column; align-items: center; gap: 16px; }
+.auth-mark { width: 54px; height: 54px; }
+#auth-gate h2 { font-family: 'Montserrat', sans-serif; font-size: 20px; font-weight: 800; color: #fff; text-align: center; }
+#auth-gate p { font-size: 13px; color: rgba(255,255,255,.5); text-align: center; margin: 0; }
+.auth-btn { font-family: 'Montserrat', sans-serif; background: linear-gradient(135deg,#7EC0EA,var(--navy)); color: #12242f; border: none; border-radius: 24px; padding: .75rem 2rem; font-size: 13px; font-weight: 800; cursor: pointer; letter-spacing: .02em; box-shadow: 0 4px 14px rgba(93,156,212,.35); transition: opacity .15s; }
+.auth-btn:hover { opacity: .88; }
+
+/* ── MAIN ── */
+.main-wrap { display: none; max-width: 900px; margin: 0 auto; }
+
+.page-header { position: relative; overflow: hidden; background: linear-gradient(135deg, var(--charcoal) 0%, var(--navy) 100%); color: #fff; border-radius: var(--radius); padding: 24px 28px 22px; margin-bottom: 20px; box-shadow: 0 4px 20px rgba(93,156,212,0.22); }
+.page-header .h-rings { position: absolute; inset: 0; width: 100%; height: 100%; opacity: .22; pointer-events: none; }
+.page-header .h-chev { position: absolute; right: -3%; top: -22%; width: 22%; max-width: 120px; opacity: .45; pointer-events: none; }
+.page-header-inner { position: relative; z-index: 2; display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.page-header h1 { font-family: 'Montserrat', sans-serif; font-size: 16px; font-weight: 800; letter-spacing: -.2px; }
+.page-header p { font-size: 11.5px; color: rgba(255,255,255,.62); margin-top: 5px; }
+.back-link { font-size: 12px; color: rgba(255,255,255,.7); text-decoration: none; display: flex; align-items: center; gap: 5px; white-space: nowrap; }
+.back-link:hover { color: #fff; }
+
+.controls { display: flex; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; }
+.controls input, .controls select { font-family: 'Titillium Web', sans-serif; font-size: 13px; padding: 8px 12px; border: 1.5px solid var(--border); border-radius: 8px; background: #fff; color: var(--charcoal); outline: none; transition: border-color .15s; }
+.controls input { flex: 1; min-width: 160px; }
+.controls input:focus, .controls select:focus { border-color: var(--navy); }
+
+.stats-bar { display: flex; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; }
+.stat-chip { background: #fff; border-radius: 8px; padding: 10px 16px; box-shadow: var(--shadow); font-size: 12px; color: #718096; }
+.stat-chip strong { font-family: 'Montserrat', sans-serif; font-size: 20px; font-weight: 800; color: var(--charcoal); display: block; line-height: 1.1; }
+
+.table-wrap { background: #fff; border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+thead th { background: #f7f8fa; padding: 10px 14px; text-align: left; font-family: 'Montserrat', sans-serif; font-size: 11px; font-weight: 700; color: #718096; letter-spacing: .04em; text-transform: uppercase; border-bottom: 1px solid var(--border); white-space: nowrap; }
+tbody tr { border-bottom: 1px solid #f0f2f5; transition: background .1s; }
+tbody tr:last-child { border-bottom: none; }
+tbody tr:hover { background: #f7fbff; }
+tbody td { padding: 10px 14px; vertical-align: middle; }
+.tag-alarme { display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 700; font-family: 'Montserrat', sans-serif; }
+.tag-verde { background: #c6f6d5; color: #276749; }
+.tag-amarelo { background: #fefcbf; color: #744210; }
+.tag-vermelho { background: #fed7d7; color: #822727; }
+.tag-default { background: #edf2f7; color: #4a5568; }
+.badge-produto { display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 700; font-family: 'Montserrat', sans-serif; background: #EBF4FF; color: #2b6cb0; }
+.empty-state { padding: 40px; text-align: center; color: #a0aec0; font-size: 13px; }
+.loading-state { padding: 40px; text-align: center; color: #a0aec0; font-size: 13px; }
+
+.footer-badge { min-width: 26px; height: 18px; padding: 0 6px; border-radius: 9px; background: linear-gradient(135deg,var(--navy),#6B7DE0); display: inline-flex; align-items: center; justify-content: center; font-family: 'Montserrat', sans-serif; font-size: 9px; font-weight: 800; color: #fff; letter-spacing: .03em; vertical-align: middle; margin-left: 6px; line-height: 1; }
+.page-footer { margin-top: 20px; text-align: center; font-size: 11px; color: #a0aec0; }
+</style>
+</head>
+<body>
+
+<!-- AUTH GATE -->
+<div id="auth-gate">
+  <svg class="auth-rings" viewBox="0 0 600 560" preserveAspectRatio="xMidYMin slice" aria-hidden="true">
+    <defs>
+      <radialGradient id="authRingFade" cx="70%" cy="-10%" r="90%">
+        <stop offset="0%" stop-color="#7EC0EA" stop-opacity="0.5"/>
+        <stop offset="100%" stop-color="#7EC0EA" stop-opacity="0"/>
+      </radialGradient>
+    </defs>
+    <g stroke="#6fa8c9" fill="none" stroke-width="1">
+      <circle cx="430" cy="-60" r="120" opacity="0.5"/><circle cx="430" cy="-60" r="160" opacity="0.45"/><circle cx="430" cy="-60" r="200" opacity="0.4"/><circle cx="430" cy="-60" r="240" opacity="0.35"/><circle cx="430" cy="-60" r="280" opacity="0.3"/><circle cx="430" cy="-60" r="320" opacity="0.25"/><circle cx="430" cy="-60" r="360" opacity="0.2"/><circle cx="430" cy="-60" r="400" opacity="0.15"/>
+    </g>
+    <rect x="0" y="0" width="600" height="560" fill="url(#authRingFade)"/>
+  </svg>
+  <svg class="auth-chevrons" viewBox="0 0 260 260" fill="none" aria-hidden="true">
+    <defs>
+      <linearGradient id="authChevGrad" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="#a9c8db"/>
+        <stop offset="100%" stop-color="#2f4550"/>
+      </linearGradient>
+    </defs>
+    <path d="M50 210 L130 130 L210 210" stroke="#3f5560" stroke-width="26" opacity="0.4" transform="translate(18,-10)"/>
+    <path d="M40 220 L130 130 L220 220" stroke="url(#authChevGrad)" stroke-width="30" stroke-linejoin="round" stroke-linecap="square"/>
+  </svg>
+  <div class="auth-panel">
+    <svg class="auth-mark" viewBox="0 0 100 100" aria-hidden="true">
+      <path d="M20 66 L50 36 L80 66" stroke="#7EC0EA" stroke-width="11" fill="none" stroke-linejoin="round" stroke-linecap="square"/>
+    </svg>
+    <h2>Handoff Implementação</h2>
+    <p>Acesso restrito · Preâmbulo Tech</p>
+    <button class="auth-btn" onclick="if(window.netlifyIdentity)window.netlifyIdentity.open()">Entrar</button>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div class="main-wrap" id="main-wrap">
+
+  <div class="page-header">
+    <svg class="h-rings" viewBox="0 0 400 160" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+      <g stroke="#fff" fill="none" stroke-width="1">
+        <circle cx="370" cy="20" r="80" opacity="0.2"/><circle cx="370" cy="20" r="120" opacity="0.15"/><circle cx="370" cy="20" r="160" opacity="0.1"/>
+      </g>
+    </svg>
+    <svg class="h-chev" viewBox="0 0 120 120" fill="none" aria-hidden="true">
+      <path d="M20 100 L60 50 L100 100" stroke="rgba(255,255,255,0.25)" stroke-width="14" stroke-linejoin="round" stroke-linecap="square"/>
+    </svg>
+    <div class="page-header-inner">
+      <div>
+        <h1>Handoffs Realizados</h1>
+        <p>Histórico de implementações concluídas</p>
+      </div>
+      <a class="back-link" href="index.html">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+        Voltar
+      </a>
+    </div>
+  </div>
+
+  <div class="stats-bar" id="stats-bar">
+    <div class="stat-chip"><strong id="stat-total">—</strong>Total</div>
+    <div class="stat-chip"><strong id="stat-cpj3c">—</strong>CPJ-3C</div>
+    <div class="stat-chip"><strong id="stat-office">—</strong>Office ADV</div>
+    <div class="stat-chip"><strong id="stat-alarme">—</strong>Com alarme</div>
+  </div>
+
+  <div class="controls">
+    <input type="text" id="filtro-busca" placeholder="Buscar escritório ou implementador…">
+    <select id="filtro-produto">
+      <option value="">Todos os produtos</option>
+      <option value="CPJ-3C">CPJ-3C</option>
+      <option value="Office ADV">Office ADV</option>
+    </select>
+    <select id="filtro-alarme">
+      <option value="">Todos os alarmes</option>
+      <option value="verde">Verde</option>
+      <option value="amarelo">Amarelo</option>
+      <option value="vermelho">Vermelho</option>
+    </select>
+  </div>
+
+  <div class="table-wrap">
+    <div class="loading-state" id="loading-state">Carregando handoffs…</div>
+    <table id="handoffs-table" style="display:none">
+      <thead>
+        <tr>
+          <th>Produto</th>
+          <th>Escritório</th>
+          <th>Implementador</th>
+          <th>Data handoff</th>
+          <th>Alarme</th>
+        </tr>
+      </thead>
+      <tbody id="handoffs-body"></tbody>
+    </table>
+    <div class="empty-state" id="empty-state" style="display:none">Nenhum handoff encontrado.</div>
+  </div>
+
+  <div class="page-footer">
+    Preâmbulo Tech &nbsp;·&nbsp; Diretoria de Operações <span class="footer-badge">BKC</span>
+  </div>
+
+</div>
+
+<script>
+let todosHandoffs = [];
+
+function mostrarDashboard() {
+  document.getElementById('auth-gate').style.display = 'none';
+  document.getElementById('main-wrap').style.display = 'block';
+  carregarHandoffs();
+}
+
+if (window.netlifyIdentity) {
+  window.netlifyIdentity.on('init', user => { if (user) mostrarDashboard(); });
+  window.netlifyIdentity.on('login', () => { mostrarDashboard(); window.netlifyIdentity.close(); });
+  window.netlifyIdentity.on('signup', () => { mostrarDashboard(); window.netlifyIdentity.close(); });
+}
+
+async function carregarHandoffs() {
+  try {
+    const res = await fetch('/.netlify/functions/handoffs');
+    if (!res.ok) throw new Error('Erro ' + res.status);
+    todosHandoffs = await res.json();
+    atualizarStats(todosHandoffs);
+    renderTabela(todosHandoffs);
+  } catch (e) {
+    document.getElementById('loading-state').textContent = 'Não foi possível carregar os handoffs. Verifique se o token da API está configurado.';
+  }
+}
+
+function atualizarStats(lista) {
+  document.getElementById('stat-total').textContent = lista.length;
+  document.getElementById('stat-cpj3c').textContent = lista.filter(h => h.produto === 'CPJ-3C').length;
+  document.getElementById('stat-office').textContent = lista.filter(h => h.produto === 'Office ADV').length;
+  document.getElementById('stat-alarme').textContent = lista.filter(h => h.tag_alarme && h.tag_alarme !== '').length;
+}
+
+function tagClass(alarme) {
+  const v = (alarme || '').toLowerCase();
+  if (v === 'verde') return 'tag-verde';
+  if (v === 'amarelo') return 'tag-amarelo';
+  if (v === 'vermelho') return 'tag-vermelho';
+  return 'tag-default';
+}
+
+function formatarData(d) {
+  if (!d || d === '—') return '—';
+  const parts = d.slice(0, 10).split('-');
+  if (parts.length === 3) return `${parts[2]}/${parts[1]}/${parts[0]}`;
+  return d;
+}
+
+function renderTabela(lista) {
+  const loading = document.getElementById('loading-state');
+  const table = document.getElementById('handoffs-table');
+  const empty = document.getElementById('empty-state');
+  const tbody = document.getElementById('handoffs-body');
+
+  loading.style.display = 'none';
+
+  if (lista.length === 0) {
+    table.style.display = 'none';
+    empty.style.display = 'block';
+    return;
+  }
+
+  table.style.display = 'table';
+  empty.style.display = 'none';
+
+  tbody.innerHTML = lista.map(h => `
+    <tr>
+      <td><span class="badge-produto">${h.produto}</span></td>
+      <td>${h.escritorio}</td>
+      <td>${h.implementador}</td>
+      <td>${formatarData(h.data_handoff)}</td>
+      <td>${h.tag_alarme ? `<span class="tag-alarme ${tagClass(h.tag_alarme)}">${h.tag_alarme}</span>` : '—'}</td>
+    </tr>
+  `).join('');
+}
+
+function filtrar() {
+  const busca = document.getElementById('filtro-busca').value.toLowerCase();
+  const produto = document.getElementById('filtro-produto').value;
+  const alarme = document.getElementById('filtro-alarme').value.toLowerCase();
+
+  const filtrado = todosHandoffs.filter(h => {
+    const matchBusca = !busca || h.escritorio.toLowerCase().includes(busca) || h.implementador.toLowerCase().includes(busca);
+    const matchProduto = !produto || h.produto === produto;
+    const matchAlarme = !alarme || (h.tag_alarme || '').toLowerCase() === alarme;
+    return matchBusca && matchProduto && matchAlarme;
+  });
+
+  renderTabela(filtrado);
+}
+
+document.getElementById('filtro-busca').addEventListener('input', filtrar);
+document.getElementById('filtro-produto').addEventListener('change', filtrar);
+document.getElementById('filtro-alarme').addEventListener('change', filtrar);
+</script>
+</body>
+</html>
