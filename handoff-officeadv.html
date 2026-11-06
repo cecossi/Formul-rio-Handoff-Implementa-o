@@ -105,6 +105,8 @@ table.tf select, table.tf input[type=text], table.tf input[type=date] { font-siz
 .tbtn.g { background: var(--green-bg); color: var(--green); }
 .tbtn.r { background: var(--red-bg); color: var(--red); }
 .tbtn.g.selected { background: var(--green); color: #fff; box-shadow: 0 4px 14px rgba(59,109,17,.3); transform: translateY(-1px); }
+.tbtn.a { background: var(--amber-bg); color: var(--amber); }
+.tbtn.a.selected { background: var(--amber); color: #fff; box-shadow: 0 4px 14px rgba(133,79,11,.3); transform: translateY(-1px); }
 .tbtn.r.selected { background: var(--red); color: #fff; box-shadow: 0 4px 14px rgba(163,45,45,.3); transform: translateY(-1px); }
 
 .alarm-route { display: none; margin-top: 1rem; }
@@ -383,6 +385,14 @@ table.tf select, table.tf input[type=text], table.tf input[type=date] { font-siz
         <label class="ri"><input type="radio" name="fin"> Não contratado — não se aplica</label>
       </div>
 
+      <div class="stitle" style="margin-top:.8rem">Versão do Módulo Financeiro</div>
+      <div class="field-hint" style="margin-bottom:.4rem">O Office ADV tem duas versões do financeiro em convivência. Confirmar qual está ativa para alinhar o treinamento correto.</div>
+      <div class="rg">
+        <label class="ri"><input type="radio" name="fin-v"> V1 — Fluxo de Caixa (versão anterior)</label>
+        <label class="ri"><input type="radio" name="fin-v"> V2 — Módulo Financeiro (versão atual)</label>
+        <label class="ri"><input type="radio" name="fin-v"> Não contratado — não se aplica</label>
+      </div>
+
       <div class="stitle">Módulos contratados à parte — verificação de acesso</div>
       <div class="field-hint" style="margin-bottom:.5rem">Se o módulo não foi contratado, a tela correspondente aparece vazia — fonte frequente de dúvida do cliente pós-handoff.</div>
       <table class="tf">
@@ -410,6 +420,8 @@ table.tf select, table.tf input[type=text], table.tf input[type=date] { font-siz
           <tr><td>Perfis de acesso configurados e testados</td><td><select><option>Sim — personalizados para o escritório</option><option>Sim — padrão genérico (não customizado)</option><option>Parcialmente</option><option>Não configurados</option></select></td></tr>
           <tr class="ev"><td>Senhas padrão alteradas pelos usuários</td><td><select><option>Sim</option><option>Não</option><option>Parcialmente</option></select></td></tr>
           <tr><td>Ações em lote testadas por perfil administrador</td><td><select><option>Sim — testadas e funcionando</option><option>Não testadas</option><option>Não se aplica</option></select></td></tr>
+          <tr class="ev"><td>Regra de aprovação de reagendamento explicada a coordenadores <span style="font-size:11px;color:var(--gray)">(quem aprova = coordenador de quem vai receber, não de quem alterou)</span></td><td><select><option>Sim — explicado e compreendido</option><option>Não abordado</option><option>Não se aplica</option></select></td></tr>
+          <tr><td>Acesso mobile orientado (Safari — desativar bloqueio de pop-ups)</td><td><select><option>Sim — orientado</option><option>Não abordado</option><option>Não se aplica</option></select></td></tr>
         </tbody>
       </table>
     </div>
@@ -440,7 +452,8 @@ table.tf select, table.tf input[type=text], table.tf input[type=date] { font-siz
           <tr><td>Publicação recebida e vinculada a processo</td><td><select><option>Funcionando</option><option>Com erro</option><option>Não se aplica — módulo não contratado</option></select></td></tr>
           <tr class="ev"><td>Evento de agenda criado e exibido corretamente</td><td><select><option>Funcionando</option><option>Com erro</option><option>Não testado</option></select></td></tr>
           <tr><td>Serviço extrajudicial cadastrado</td><td><select><option>Funcionando</option><option>Com erro</option><option>Não se aplica</option></select></td></tr>
-          <tr class="ev"><td>Relatório básico gerado</td><td><select><option>Funcionando</option><option>Com erro</option><option>Não testado</option></select></td></tr>
+          <tr class="ev"><td>Serviço criado com atividade lançada aparece na agenda do responsável <span style="font-size:11px;color:var(--gray)">(criar a pasta não basta — sem atividade lançada não aparece na agenda)</span></td><td><select><option>Verificado — funcionando</option><option>Com erro</option><option>Não verificado</option><option>Não se aplica</option></select></td></tr>
+          <tr><td>Relatório básico gerado</td><td><select><option>Funcionando</option><option>Com erro</option><option>Não testado</option></select></td></tr>
           <tr><td>Banco de Peças — ao menos uma peça acessível</td><td><select><option>Funcionando</option><option>Com erro</option><option>Não se aplica</option></select></td></tr>
           <tr class="ev"><td>Módulo Financeiro acessado pelo usuário final</td><td><select><option>Sim — acesso confirmado</option><option>Com erro</option><option>Não se aplica — não contratado</option></select></td></tr>
           <tr><td>Ação em lote executada por perfil administrador</td><td><select><option>Sim — testada com sucesso</option><option>Com erro</option><option>Não testado</option></select></td></tr>
@@ -567,6 +580,21 @@ table.tf select, table.tf input[type=text], table.tf input[type=date] { font-siz
       </div>
       <div class="fl" style="margin-top:.8rem"><label>Observações sobre o perfil</label><textarea placeholder="Contexto adicional útil para o CS..."></textarea></div>
 
+      <div class="stitle">Sub-abas de publicações foram diferenciadas no treinamento?</div>
+      <div class="field-hint" style="margin-bottom:.5rem">Advogados / Lixeira / Demais Publicações têm propósitos distintos mas nomes parecidos — fonte comum de confusão pós-handoff.</div>
+      <div class="rg">
+        <label class="ri"><input type="radio" name="pub-sub"> Sim — cada sub-aba foi explicada separadamente</label>
+        <label class="ri w"><input type="radio" name="pub-sub"> Não abordado &nbsp;← sinalizar para o CS</label>
+        <label class="ri"><input type="radio" name="pub-sub"> Não se aplica — cliente não contratou publicações</label>
+      </div>
+
+      <div class="stitle">Relatórios — cliente foi informado de que modelos não são compartilhados entre usuários?</div>
+      <div class="field-hint" style="margin-bottom:.5rem">Relatório configurado por um usuário fica restrito a ele. Para a equipe operar com os mesmos relatórios, cada pessoa precisa replicar os filtros na própria conta.</div>
+      <div class="rg">
+        <label class="ri"><input type="radio" name="rel-share"> Sim — cliente e equipe foram informados</label>
+        <label class="ri w"><input type="radio" name="rel-share"> Não abordado &nbsp;← sinalizar para o CS</label>
+      </div>
+
       <div class="stitle">Se você fosse o CS recebendo esse cliente agora, o que te preocuparia?</div>
       <div class="fl"><textarea rows="3" placeholder="Campo livre — o dado mais valioso costuma aparecer aqui."></textarea></div>
     </div>
@@ -615,8 +643,9 @@ table.tf select, table.tf input[type=text], table.tf input[type=date] { font-siz
     <div class="sb">
       <div class="stitle">TAG Alarme</div>
       <div class="tab-blk">
-        <button type="button" class="tbtn g" id="tag-ok" onclick="selectTag('ok')"><svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Sem alarme — cliente saudável, sem risco imediato identificado</button>
-        <button type="button" class="tbtn r" id="tag-al" onclick="selectTag('al')"><svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z"/><path d="M12 9v4M12 17h.01"/></svg>Alarme ativo — comunicar à gestão antes de encerrar formalmente</button>
+        <button type="button" class="tbtn g" id="tag-vd" onclick="selectTag('vd')"><svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Verde — cliente saudável, sem risco identificado</button>
+        <button type="button" class="tbtn a" id="tag-am" onclick="selectTag('am')"><svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>Amarelo — atenção: pontos de risco, cadência ativa no CS</button>
+        <button type="button" class="tbtn r" id="tag-vm" onclick="selectTag('vm')"><svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z"/><path d="M12 9v4M12 17h.01"/></svg>Vermelho — alarme crítico: comunicar gestão antes de encerrar</button>
       </div>
       <div class="alarm-route" id="alarm-route">
         <div class="fl"><label>Encaminhar alarme para</label></div>
@@ -653,6 +682,9 @@ const cfgItens = [
   { nm: 'Menu Alerta' },
   { nm: 'Banco de Peças' },
   { nm: 'Cadastros (plano de contas, categorias)' },
+  { nm: 'Campos específicos configurados (processos / serviços / clientes)' },
+  { nm: 'Segmentos configurados' },
+  { nm: 'Feriados municipais cadastrados' },
 ];
 const ctb = document.getElementById('cfg-tbody');
 cfgItens.forEach((item, i) => {
@@ -747,9 +779,10 @@ ms.addEventListener('change', () => {
 
 // TAG Alarme
 function selectTag(which) {
-  document.getElementById('tag-ok').classList.toggle('selected', which === 'ok');
-  document.getElementById('tag-al').classList.toggle('selected', which === 'al');
-  document.getElementById('alarm-route').style.display = which === 'al' ? 'block' : 'none';
+  document.getElementById('tag-vd').classList.toggle('selected', which === 'vd');
+  document.getElementById('tag-am').classList.toggle('selected', which === 'am');
+  document.getElementById('tag-vm').classList.toggle('selected', which === 'vm');
+  document.getElementById('alarm-route').style.display = (which === 'am' || which === 'vm') ? 'block' : 'none';
 }
 
 // Auth gate
@@ -774,8 +807,9 @@ function finalizar() {
 
 // Registro resumido no Netlify Forms
 function registrarHandoff() {
-  const tagAlarme = document.getElementById('tag-al').classList.contains('selected') ? 'Alarme ativo'
-    : document.getElementById('tag-ok').classList.contains('selected') ? 'Sem alarme'
+  const tagAlarme = document.getElementById('tag-vm').classList.contains('selected') ? 'vermelho'
+    : document.getElementById('tag-am').classList.contains('selected') ? 'amarelo'
+    : document.getElementById('tag-vd').classList.contains('selected') ? 'verde'
     : 'Não selecionado';
 
   const dados = {
